@@ -65,6 +65,7 @@
 			on:click={() => {
 				show = false;
 			}}
+			aria-label={$i18n.t('Close')}
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +84,7 @@
 		<div class=" flex flex-col w-full sm:flex-row sm:justify-center sm:space-x-6">
 			{#if chats}
 				{#if chats.length > 0}
-					<div class="text-left text-sm w-full mb-4 max-h-[22rem] overflow-y-scroll">
+					<div class="text-left text-sm w-full mb-4 max-h-[22rem] overflow-y-auto">
 						<div class="relative overflow-x-auto">
 							<table class="w-full text-sm text-left text-gray-600 dark:text-gray-400 table-auto">
 								<thead

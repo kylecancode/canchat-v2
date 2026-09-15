@@ -214,7 +214,7 @@
 
 								<div class=" mt-6 mx-auto relative group w-fit">
 									<button
-										class="relative z-20 flex px-5 py-2 rounded-full bg-white border border-gray-100 dark:border-none hover:bg-gray-100 transition font-medium text-sm"
+										class="relative z-20 flex px-5 py-2 rounded-full bg-white text-gray-900 border border-gray-100 hover:bg-gray-100 dark:bg-gray-100 dark:text-gray-900 dark:hover:bg-white dark:border-none transition font-medium text-sm"
 										on:click={async () => {
 											let blob = new Blob([JSON.stringify(localDBChats)], {
 												type: 'application/json'
@@ -228,11 +228,11 @@
 											localDBChats = [];
 										}}
 									>
-										Download & Delete
+										{$i18n.t('Download')} & {$i18n.t('Delete')}
 									</button>
 
 									<button
-										class="text-xs text-center w-full mt-2 text-gray-400 underline"
+										class="text-xs text-center w-full mt-2 text-gray-600 dark:text-gray-400 underline"
 										on:click={async () => {
 											localDBChats = [];
 										}}>{$i18n.t('Close')}</button

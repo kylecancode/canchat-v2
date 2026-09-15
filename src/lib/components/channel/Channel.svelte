@@ -2,7 +2,7 @@
 	import { toast } from 'svelte-sonner';
 	import { Pane, PaneGroup, PaneResizer } from 'paneforge';
 
-	import { onDestroy, onMount, tick } from 'svelte';
+	import { getContext, onDestroy, onMount, tick } from 'svelte';
 	import { goto } from '$app/navigation';
 
 	import { chatId, showSidebar, socket, user } from '$lib/stores';
@@ -14,6 +14,8 @@
 	import Drawer from '../common/Drawer.svelte';
 	import EllipsisVertical from '../icons/EllipsisVertical.svelte';
 	import Thread from './Thread.svelte';
+
+	const i18n = getContext('i18n');
 
 	export let id = '';
 
@@ -262,6 +264,7 @@
 			{#if threadId !== null}
 				<Drawer
 					show={threadId !== null}
+					title={$i18n.t('Thread')}
 					on:close={() => {
 						threadId = null;
 					}}

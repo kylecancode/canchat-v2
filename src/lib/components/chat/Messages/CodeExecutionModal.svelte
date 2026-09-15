@@ -48,6 +48,7 @@
 					show = false;
 					codeExecution = null;
 				}}
+				aria-label={$i18n.t('Close')}
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +65,7 @@
 
 		<div class="flex flex-col md:flex-row w-full px-4 pb-5">
 			<div
-				class="flex flex-col w-full dark:text-gray-200 overflow-y-scroll max-h-[22rem] scrollbar-hidden"
+				class="flex flex-col w-full dark:text-gray-200 overflow-y-auto max-h-[22rem] scrollbar-hidden"
 			>
 				<div class="flex flex-col w-full">
 					<CodeBlock

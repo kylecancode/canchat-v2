@@ -245,7 +245,7 @@
 
 				<hr class="mt-1.5 border-gray-50 dark:border-gray-850" />
 
-				{#each filteredGroups as group}
+				{#each filteredGroups as group (group.id)}
 					<div class="my-2">
 						<GroupItem {group} {users} {setGroups} />
 					</div>

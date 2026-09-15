@@ -45,6 +45,7 @@
 						on:click={() => {
 							show = false;
 						}}
+						aria-label={$i18n.t('Close')}
 					>
 						<XMark />
 					</button>

@@ -102,8 +102,8 @@
 	};
 </script>
 
-<Modal bind:show on:close={closeModal} disableClose={loading}>
-	<div class="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
+<Modal bind:show disableClose={loading} title={$i18n.t('Suggestion Form')}>
+	<div class="flex justify-between items-center p-4 border-b border-gray-100 dark:border-gray-850">
 		<h3 class="text-2xl font-medium font-primary text-gray-900 dark:text-gray-100">
 			{$i18n.t('Suggestion Form')}
 		</h3>
@@ -133,7 +133,9 @@
 			</p>
 			<form on:submit|preventDefault={submit} class="space-y-4">
 				{#if error}
-					<div class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded-lg">
+					<div
+						class="bg-red-50 dark:bg-red-950/40 border border-red-300 dark:border-red-900 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg"
+					>
 						<p>{error}</p>
 					</div>
 				{/if}
@@ -147,7 +149,7 @@
 						rows="4"
 						required
 						placeholder={$i18n.t('Please describe your suggestion in detail')}
-						class="w-full resize-none rounded-lg py-2 px-4 text-sm bg-gray-100 dark:text-gray-300 dark:bg-gray-850 border border-gray-200 dark:border-gray-700 outline-none focus:ring-1 focus:ring-gray-300 dark:focus:ring-gray-700"
+						class="w-full resize-none rounded-lg py-2 px-4 text-sm bg-gray-100 dark:text-gray-300 dark:bg-gray-850 border border-gray-100 dark:border-gray-850 outline-none focus:ring-1 focus:ring-gray-300 dark:focus:ring-gray-800"
 					></textarea>
 				</div>
 				<div>

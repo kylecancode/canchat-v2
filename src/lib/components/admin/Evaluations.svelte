@@ -115,7 +115,7 @@
 			</button>
 		</div>
 
-		<div class="flex-1 mt-1 lg:mt-0 overflow-y-scroll">
+		<div class="flex-1 mt-1 lg:mt-0 overflow-y-auto">
 			{#if selectedTab === 'leaderboard'}
 				<Leaderboard {feedbacks} />
 			{:else if selectedTab === 'feedbacks'}

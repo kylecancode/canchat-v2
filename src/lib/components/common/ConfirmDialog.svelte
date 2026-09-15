@@ -7,6 +7,7 @@
 	import { flyAndScale } from '$lib/utils/transitions';
 	import * as focusTrap from 'focus-trap';
 	import { ariaMessage } from '$lib/stores';
+	import { lockBodyScroll, unlockBodyScroll } from '$lib/utils/scroll-lock';
 
 	export let title = '';
 	export let message = '';
@@ -28,9 +29,17 @@
 	let modalElement: HTMLElement;
 	let mounted = false;
 	let trap: any = null;
+	let scrollLocked = false;
+
+	// Confirm dialogs are usually opened on top of a modal. Without this check a
+	// single Escape closed both layers at once.
+	const isTopModal = () => {
+		const modals = document.getElementsByClassName('modal');
+		return modals.length && modals[modals.length - 1] === modalElement;
+	};
 
 	const handleKeyDown = (event: KeyboardEvent) => {
-		if (event.key === 'Escape') {
+		if (event.key === 'Escape' && isTopModal()) {
 			show = false;
 		}
 	};
@@ -53,13 +62,21 @@
 			document.body.appendChild(modalElement);
 
 			window.addEventListener('keydown', handleKeyDown);
-			document.body.style.overflow = 'hidden';
+			if (!scrollLocked) {
+				lockBodyScroll();
+				scrollLocked = true;
+			}
 			ariaMessage.set($i18n.t('dialogOpened', { title: title }));
 		} else if (modalElement) {
 			window.removeEventListener('keydown', handleKeyDown);
-			document.body.removeChild(modalElement);
+			if (document.body.contains(modalElement)) {
+				document.body.removeChild(modalElement);
+			}
 
-			document.body.style.overflow = 'unset';
+			if (scrollLocked) {
+				unlockBodyScroll();
+				scrollLocked = false;
+			}
 			ariaMessage.set($i18n.t('dialogClosed', { title: title }));
 		}
 	}
@@ -92,19 +109,22 @@
 </script>
 
 {#if show}
-	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div
 		bind:this={modalElement}
-		class=" fixed top-0 right-0 left-0 bottom-0 bg-black/60 w-full h-screen max-h-[100dvh] flex justify-center z-[99999999] overflow-hidden overscroll-contain"
+		class="modal fixed top-0 right-0 left-0 bottom-0 bg-black/60 w-full h-screen max-h-[100dvh] p-3 flex justify-center z-[99999999] overflow-y-auto overscroll-contain"
 		in:fade={{ duration: 10 }}
 		on:mousedown={() => {
 			show = false;
 		}}
 	>
+		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 		<div
 			id="confirm-dialog-container-wrapper"
-			class=" m-auto rounded-2xl max-w-full w-[32rem] mx-2 bg-gray-50 dark:bg-gray-950 max-h-[100dvh] shadow-3xl"
+			role="dialog"
+			aria-modal="true"
+			aria-label={title || $i18n.t('Confirm your action')}
+			class=" m-auto rounded-2xl w-[32rem] mx-2 max-w-[calc(100%-1rem)] bg-gray-50 dark:bg-gray-950 shadow-3xl"
 			in:flyAndScale
 			on:mousedown={(e) => {
 				e.stopPropagation();
@@ -120,7 +140,7 @@
 				</div>
 
 				<slot>
-					<div class=" text-sm text-gray-500 flex-1">
+					<div class=" text-sm text-gray-600 dark:text-gray-400 flex-1">
 						{#if message !== ''}
 							{message}
 						{:else}
@@ -164,20 +184,3 @@
 		</div>
 	</div>
 {/if}
-
-<style>
-	.modal-content {
-		animation: scaleUp 0.1s ease-out forwards;
-	}
-
-	@keyframes scaleUp {
-		from {
-			transform: scale(0.985);
-			opacity: 0;
-		}
-		to {
-			transform: scale(1);
-			opacity: 1;
-		}
-	}
-</style>

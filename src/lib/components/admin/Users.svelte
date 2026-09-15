@@ -132,7 +132,7 @@
 		</button>
 	</div>
 
-	<div class="flex-1 mt-1 lg:mt-0 overflow-y-scroll">
+	<div class="flex-1 mt-1 lg:mt-0 overflow-y-auto">
 		{#if selectedTab === 'overview'}
 			<UserList {users} />
 		{:else if selectedTab === 'groups'}

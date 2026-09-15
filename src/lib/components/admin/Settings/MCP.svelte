@@ -409,7 +409,7 @@
 		updateMCPHandler();
 	}}
 >
-	<div class="space-y-3 overflow-y-scroll scrollbar-hidden h-full">
+	<div class="space-y-3 overflow-y-auto scrollbar-hidden h-full">
 		<div class="flex flex-col gap-1 mt-1.5 mb-2">
 			<div class="flex justify-between items-center">
 				<div class="flex items-center md:self-center text-xl font-medium px-0.5">

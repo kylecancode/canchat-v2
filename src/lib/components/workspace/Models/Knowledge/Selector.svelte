@@ -116,7 +116,7 @@
 
 			<hr class=" border-gray-50 dark:border-gray-700 my-1.5" />
 
-			<div class="max-h-48 overflow-y-scroll">
+			<div class="max-h-48 overflow-y-auto">
 				{#if filteredItems.length === 0}
 					<div class="text-center text-sm text-gray-500 dark:text-gray-400">
 						{$i18n.t('No knowledge found')}

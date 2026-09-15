@@ -190,7 +190,7 @@
 		dispatch('save');
 	}}
 >
-	<div class=" overflow-y-scroll scrollbar-hidden h-full">
+	<div class=" overflow-y-auto scrollbar-hidden h-full">
 		{#if ENABLE_OPENAI_API !== null && ENABLE_OLLAMA_API !== null}
 			<div class="my-2">
 				<div class="mt-2 space-y-2 pr-1.5">

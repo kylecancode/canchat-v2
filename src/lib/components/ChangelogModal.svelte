@@ -36,6 +36,7 @@
 					localStorage.version = $config.version;
 					show = false;
 				}}
+				aria-label={$i18n.t('Close')}
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -59,7 +60,7 @@
 	</div>
 
 	<div class=" w-full p-4 px-5 text-gray-700 dark:text-gray-100">
-		<div class=" overflow-y-scroll max-h-96 scrollbar-hidden">
+		<div class=" overflow-y-auto max-h-96 scrollbar-hidden">
 			<div class="mb-3">
 				{#if changelog}
 					{#each Object.keys(changelog) as version}

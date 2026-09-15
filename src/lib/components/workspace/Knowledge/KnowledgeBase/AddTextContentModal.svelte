@@ -28,6 +28,7 @@
 			on:click={() => {
 				show = false;
 			}}
+			aria-label={$i18n.t('Close')}
 		>
 			<XMark className="size-3.5" />
 		</button>

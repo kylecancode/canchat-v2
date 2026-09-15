@@ -286,7 +286,7 @@
 		submitHandler();
 	}}
 >
-	<div class=" space-y-2.5 overflow-y-scroll scrollbar-hidden h-full pr-1.5">
+	<div class=" space-y-2.5 overflow-y-auto scrollbar-hidden h-full pr-1.5">
 		<div class="flex flex-col gap-0.5">
 			<div class=" mb-0.5 text-sm font-medium">{$i18n.t('General Settings')}</div>
 

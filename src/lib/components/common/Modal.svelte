@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy, onMount, getContext } from 'svelte';
+	import { onDestroy, getContext } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { flyAndScale } from '$lib/utils/transitions';
 	import * as focusTrap from 'focus-trap';
@@ -21,7 +21,6 @@
 
 	let modalElement: HTMLElement;
 	let contentEl: HTMLElement;
-	let mounted = false;
 	let trap: any = null;
 	let scrollLocked = false;
 
@@ -44,10 +43,6 @@
 		const modals = document.getElementsByClassName('modal');
 		return modals.length && modals[modals.length - 1] === modalElement;
 	};
-
-	onMount(() => {
-		mounted = true;
-	});
 
 	$: if (show && modalElement) {
 		document.body.appendChild(modalElement);
@@ -114,6 +109,7 @@
 </script>
 
 {#if show}
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div
 		bind:this={modalElement}
 		class="modal fixed top-0 right-0 left-0 bottom-0 bg-black/60 w-full h-screen max-h-[100dvh] {containerClassName} flex justify-center z-[9999] overflow-y-auto overscroll-contain"
@@ -122,6 +118,7 @@
 			if (!disableClose) show = false;
 		}}
 	>
+		<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 		<div
 			bind:this={contentEl}
 			role="dialog"

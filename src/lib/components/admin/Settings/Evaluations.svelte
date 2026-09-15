@@ -80,7 +80,7 @@
 		dispatch('save');
 	}}
 >
-	<div class="overflow-y-scroll scrollbar-hidden h-full">
+	<div class="overflow-y-auto scrollbar-hidden h-full">
 		{#if config !== null}
 			<div class="">
 				<div class="text-sm font-medium mb-2">{$i18n.t('General Settings')}</div>

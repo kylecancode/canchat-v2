@@ -113,6 +113,7 @@
 				on:click={() => {
 					show = false;
 				}}
+				aria-label={$i18n.t('Close')}
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -235,7 +236,7 @@
 						</div>
 
 						<div
-							class="flex-1 mt-1 lg:mt-1 lg:h-[22rem] lg:max-h-[22rem] overflow-y-auto scrollbar-hidden"
+							class="flex-1 min-h-0 mt-1 h-[22rem] max-h-[60vh] lg:h-[22rem] lg:max-h-[22rem] overflow-y-auto scrollbar-hidden"
 						>
 							{#if selectedTab == 'general'}
 								<Display bind:name bind:description />

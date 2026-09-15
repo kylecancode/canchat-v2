@@ -250,7 +250,7 @@
 	</div>
 
 	<div class="mb-5 gap-2 grid lg:grid-cols-2 xl:grid-cols-3">
-		{#each prompts as prompt}
+		{#each prompts as prompt (prompt.command)}
 			<div
 				class="flex space-x-4 cursor-pointer w-full px-3 py-2 dark:hover:bg-white/5 hover:bg-black/5 rounded-xl transition"
 			>

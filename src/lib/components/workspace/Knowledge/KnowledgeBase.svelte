@@ -724,6 +724,7 @@
 			{:else if !largeScreen && selectedFileId !== null}
 				<Drawer
 					className="h-full"
+					title={$i18n.t('File')}
 					show={selectedFileId !== null}
 					on:close={() => {
 						selectedFileId = null;

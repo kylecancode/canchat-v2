@@ -154,7 +154,7 @@
 		dispatch('save');
 	}}
 >
-	<div class=" space-y-3 overflow-y-scroll scrollbar-hidden h-full">
+	<div class=" space-y-3 overflow-y-auto scrollbar-hidden h-full">
 		<div class="flex flex-col gap-3">
 			<div>
 				<div class=" mb-1 text-sm font-medium">{$i18n.t('STT Settings')}</div>

@@ -31,7 +31,7 @@
 		saveHandler();
 	}}
 >
-	<div class=" space-y-3 overflow-y-scroll scrollbar-hidden h-full">
+	<div class=" space-y-3 overflow-y-auto scrollbar-hidden h-full">
 		<div>
 			<div class=" mb-2 text-sm font-medium">{$i18n.t('Database')}</div>
 

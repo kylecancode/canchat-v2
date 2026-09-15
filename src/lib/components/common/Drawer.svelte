@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { onDestroy, onMount, createEventDispatcher, tick } from 'svelte';
-	import { flyAndScale } from '$lib/utils/transitions';
-	import { fade, fly, slide } from 'svelte/transition';
+	import { onDestroy, createEventDispatcher, tick } from 'svelte';
+	import { fade, fly } from 'svelte/transition';
 	import * as focusTrap from 'focus-trap';
 	import { isApp } from '$lib/stores';
 	import { lockBodyScroll, unlockBodyScroll } from '$lib/utils/scroll-lock';
@@ -12,9 +11,8 @@
 	export let className = '';
 	export let title = '';
 
-	let modalElement = null;
-	let contentElement = null;
-	let mounted = false;
+	let modalElement: HTMLElement | null = null;
+	let contentElement: HTMLElement | null = null;
 	let trap: any = null;
 	let scrollLocked = false;
 
@@ -54,10 +52,6 @@
 		}
 	};
 
-	onMount(() => {
-		mounted = true;
-	});
-
 	$: if (show && modalElement) {
 		document.body.appendChild(modalElement);
 		window.addEventListener('keydown', handleKeyDown);
@@ -94,9 +88,7 @@
 	});
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-
 <div
 	bind:this={modalElement}
 	class="modal fixed right-0 {$isApp
@@ -107,6 +99,7 @@
 		show = false;
 	}}
 >
+	<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 	<div
 		bind:this={contentElement}
 		role="dialog"
