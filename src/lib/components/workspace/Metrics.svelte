@@ -1422,11 +1422,11 @@
 					</button>
 				</div>
 
-				<div class="overflow-y-auto max-h-64">
+				<div class="overflow-auto max-h-64">
 					{#if exportLogs.length > 0}
-						<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+						<table class="w-full min-w-[42rem] text-sm text-left text-gray-600 dark:text-gray-400">
 							<thead
-								class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+								class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-850 dark:text-gray-300"
 							>
 								<tr>
 									<th class="px-4 py-2">{$i18n.t('User')}</th>
@@ -1439,7 +1439,7 @@
 							</thead>
 							<tbody>
 								{#each exportLogs as log}
-									<tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+									<tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-850">
 										<td class="px-4 py-2 font-medium text-gray-900 dark:text-white">
 											{log.user_id}
 										</td>

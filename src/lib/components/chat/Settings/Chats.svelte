@@ -64,7 +64,7 @@
 	on:confirm={onConfirm}
 />
 <div class="flex flex-col h-full justify-between space-y-3 text-sm">
-	<div class=" space-y-2 overflow-y-scroll max-h-[28rem] lg:max-h-full">
+	<div class=" space-y-2 flex-1 min-h-0 overflow-y-auto">
 		<div class="flex flex-col">
 			<button
 				id="archive-all-chats"

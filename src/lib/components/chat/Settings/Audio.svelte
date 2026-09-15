@@ -97,7 +97,7 @@
 		dispatch('save');
 	}}
 >
-	<div class=" space-y-3 overflow-y-scroll max-h-[28rem] lg:max-h-full">
+	<div class=" space-y-3 flex-1 min-h-0 overflow-y-auto">
 		<div>
 			<h3 class=" mb-1 text-sm font-medium">{$i18n.t('STT Settings')}</h3>
 

@@ -38,6 +38,13 @@
 
 	let sortKey = 'updated_at'; // default sort key
 	let sortOrder = 'desc'; // default sort order
+
+	$: sortedChats = [...(chats ?? [])].sort((a, b) => {
+		if (a[sortKey] < b[sortKey]) return sortOrder === 'asc' ? -1 : 1;
+		if (a[sortKey] > b[sortKey]) return sortOrder === 'asc' ? 1 : -1;
+		return 0;
+	});
+
 	function setSortKey(key) {
 		if (sortKey === key) {
 			sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
@@ -97,7 +104,7 @@
 										</th>
 										<th
 											scope="col"
-											class="px-3 py-2 hidden md:flex cursor-pointer select-none justify-end"
+											class="px-3 py-2 hidden md:table-cell cursor-pointer select-none text-right"
 											on:click={() => setSortKey('updated_at')}
 										>
 											{$i18n.t('Updated at')}
@@ -111,11 +118,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									{#each chats.sort((a, b) => {
-										if (a[sortKey] < b[sortKey]) return sortOrder === 'asc' ? -1 : 1;
-										if (a[sortKey] > b[sortKey]) return sortOrder === 'asc' ? 1 : -1;
-										return 0;
-									}) as chat, idx}
+									{#each sortedChats as chat, idx (chat.id)}
 										<tr
 											class="bg-transparent {idx !== chats.length - 1 &&
 												'border-b'} dark:bg-gray-900 dark:border-gray-850 text-xs"
@@ -126,9 +129,16 @@
 														{chat.title}
 													</div>
 												</a>
+												<!-- The Updated at column is dropped on narrow screens, so keep the
+												     timestamp visible here instead of losing it entirely. -->
+												<div class="md:hidden text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+													{dayjs(chat.updated_at * 1000).format($i18n.t('MMMM DD, YYYY HH:mm'))}
+												</div>
 											</td>
 
-											<td class=" px-3 py-1 hidden md:flex h-[2.5rem] justify-end">
+											<td
+												class=" px-3 py-1 hidden md:table-cell h-[2.5rem] text-right whitespace-nowrap"
+											>
 												<div class="my-auto shrink-0">
 													{dayjs(chat.updated_at * 1000).format($i18n.t('MMMM DD, YYYY HH:mm'))}
 												</div>

@@ -273,7 +273,7 @@
 		<div class="flex flex-col w-full sm:flex-row sm:justify-center sm:space-x-6">
 			{#if viewingChat}
 				<!-- Chat conversation view when viewing chat details -->
-				<div class="text-left text-sm w-full mb-4 max-h-[22rem] overflow-y-scroll">
+				<div class="text-left text-sm w-full mb-4 max-h-[22rem] overflow-y-auto">
 					{#if conversation && conversation.length > 0}
 						<div class="space-y-4 px-1">
 							{#each conversation as message}
@@ -304,7 +304,7 @@
 				</div>
 			{:else if chat}
 				<!-- Normal chat link view -->
-				<div class="text-left text-sm w-full mb-4 max-h-[22rem] overflow-y-scroll">
+				<div class="text-left text-sm w-full mb-4 max-h-[22rem] overflow-y-auto">
 					<div class="relative overflow-x-auto">
 						<table class="w-full text-sm text-left text-gray-600 dark:text-gray-400 table-auto">
 							<thead
@@ -317,7 +317,7 @@
 									</th>
 									<th
 										scope="col"
-										class="px-3 py-2 hidden md:flex cursor-pointer select-none justify-end"
+										class="px-3 py-2 hidden md:table-cell cursor-pointer select-none text-right"
 									>
 										{$i18n.t('Updated at')}
 										<span class="invisible">▲</span>
@@ -339,9 +339,16 @@
 												</button>
 											{/if}
 										</div>
+										<!-- The Updated at column is dropped on narrow screens, so keep the
+										     timestamp visible here instead of losing it entirely. -->
+										<div class="md:hidden text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+											{dayjs(chat.updated_at * 1000).format($i18n.t('MMMM DD, YYYY HH:mm'))}
+										</div>
 									</td>
 
-									<td class="px-3 py-1 hidden md:flex h-[2.5rem] justify-end">
+									<td
+										class="px-3 py-1 hidden md:table-cell h-[2.5rem] text-right whitespace-nowrap"
+									>
 										<div class="my-auto shrink-0">
 											{dayjs(chat.updated_at * 1000).format($i18n.t('MMMM DD, YYYY HH:mm'))}
 										</div>

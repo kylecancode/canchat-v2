@@ -37,23 +37,23 @@
 				</button>
 			</div>
 
-			<div class=" flex w-full">
+			<div class="flex min-w-0 flex-1">
 				<div
-					class="flex gap-1 scrollbar-none overflow-x-auto w-fit text-center text-sm font-medium rounded-full bg-transparent pt-1"
+					class="flex gap-1 scrollbar-none overflow-x-auto max-w-full text-center text-sm font-medium rounded-full bg-transparent pt-1"
 				>
 					<a
 						class="min-w-fit rounded-full p-1.5 {['/playground', '/playground/'].includes(
 							$page.url.pathname
 						)
 							? ''
-							: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
+							: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'} transition"
 						href="/playground">{$i18n.t('Chat')}</a
 					>
 
 					<!-- <a
 						class="min-w-fit rounded-full p-1.5 {$page.url.pathname.includes('/playground/notes')
 							? ''
-							: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
+							: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'} transition"
 						href="/playground/notes">{$i18n.t('Notes')}</a
 					> -->
 
@@ -62,7 +62,7 @@
 							'/playground/completions'
 						)
 							? ''
-							: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
+							: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'} transition"
 						href="/playground/completions">{$i18n.t('Completions')}</a
 					>
 				</div>

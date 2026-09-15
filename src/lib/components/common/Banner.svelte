@@ -75,8 +75,9 @@
 						<div class="flex md:hidden group w-fit md:items-center">
 							<a
 								class="text-gray-700 dark:text-white text-xs font-semibold underline"
-								href="/assets/files/whitepaper.pdf"
-								target="_blank">Learn More</a
+								href={banner.url}
+								target="_blank"
+								rel="noopener noreferrer">{$i18n.t('Learn More')}</a
 							>
 
 							<div
@@ -109,8 +110,9 @@
 				<div class="hidden md:flex group w-fit md:items-center">
 					<a
 						class="text-gray-700 dark:text-white text-xs font-semibold underline"
-						href="/"
-						target="_blank">Learn More</a
+						href={banner.url}
+						target="_blank"
+						rel="noopener noreferrer">{$i18n.t('Learn More')}</a
 					>
 
 					<div class=" ml-1 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-white">

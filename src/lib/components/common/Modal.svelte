@@ -4,6 +4,7 @@
 	import { flyAndScale } from '$lib/utils/transitions';
 	import * as focusTrap from 'focus-trap';
 	import { ariaMessage } from '$lib/stores';
+	import { lockBodyScroll, unlockBodyScroll } from '$lib/utils/scroll-lock';
 
 	const i18n = getContext('i18n');
 
@@ -22,12 +23,14 @@
 	let contentEl: HTMLElement;
 	let mounted = false;
 	let trap: any = null;
+	let scrollLocked = false;
 
 	const sizeToWidth = (size: string) => {
 		if (size === 'full') return 'w-full';
 		if (size === 'xs') return 'w-[16rem]';
 		if (size === 'sm') return 'w-[30rem]';
 		if (size === 'md') return 'w-[42rem]';
+		if (size === 'lg') return 'w-[56rem]';
 		return 'w-[56rem]';
 	};
 
@@ -49,12 +52,20 @@
 	$: if (show && modalElement) {
 		document.body.appendChild(modalElement);
 		window.addEventListener('keydown', handleKeyDown);
-		document.body.style.overflow = 'hidden';
+		if (!scrollLocked) {
+			lockBodyScroll();
+			scrollLocked = true;
+		}
 		ariaMessage.set($i18n.t('modalOpened', { title: title }));
 	} else if (modalElement) {
 		window.removeEventListener('keydown', handleKeyDown);
-		document.body.removeChild(modalElement);
-		document.body.style.overflow = 'unset';
+		if (document.body.contains(modalElement)) {
+			document.body.removeChild(modalElement);
+		}
+		if (scrollLocked) {
+			unlockBodyScroll();
+			scrollLocked = false;
+		}
 		ariaMessage.set($i18n.t('modalClosed', { title: title }));
 	}
 
@@ -95,6 +106,10 @@
 		if (modalElement && document.body.contains(modalElement)) {
 			document.body.removeChild(modalElement);
 		}
+		if (scrollLocked) {
+			unlockBodyScroll();
+			scrollLocked = false;
+		}
 	});
 </script>
 
@@ -109,9 +124,12 @@
 	>
 		<div
 			bind:this={contentEl}
-			class=" m-auto max-w-full {sizeToWidth(size)} {size !== 'full'
-				? 'mx-2'
-				: ''} shadow-3xl min-h-fit scrollbar-hidden {className}"
+			role="dialog"
+			aria-modal="true"
+			aria-label={title || undefined}
+			class=" m-auto {size !== 'full' ? 'mx-2 max-w-[calc(100%-1rem)]' : 'max-w-full'} {sizeToWidth(
+				size
+			)} shadow-3xl min-h-fit scrollbar-hidden {className}"
 			in:flyAndScale
 			on:mousedown={(e) => {
 				e.stopPropagation();

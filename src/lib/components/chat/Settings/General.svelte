@@ -137,7 +137,7 @@
 </script>
 
 <div class="flex flex-col h-full justify-between text-sm">
-	<div class="  overflow-y-scroll max-h-[28rem] lg:max-h-full">
+	<div class="  flex-1 min-h-0 overflow-y-auto">
 		<div class="">
 			<h3 class=" mb-1 text-sm font-medium">{$i18n.t('Settings')}</h3>
 

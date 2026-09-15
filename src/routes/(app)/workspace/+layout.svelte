@@ -89,9 +89,9 @@
 					</button>
 				</div>
 
-				<div class="">
+				<div class="min-w-0 flex-1">
 					<div
-						class="flex gap-1 scrollbar-none overflow-x-auto w-fit text-center text-sm font-medium rounded-full bg-transparent py-1 touch-auto pointer-events-auto"
+						class="flex gap-1 scrollbar-none overflow-x-auto max-w-full text-center text-sm font-medium rounded-full bg-transparent py-1 touch-auto pointer-events-auto"
 					>
 						{#if $user?.role === 'admin' || $user?.permissions?.workspace?.models}
 							<a
@@ -99,7 +99,7 @@
 									'/workspace/models'
 								)
 									? ''
-									: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
+									: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'} transition"
 								href="/workspace/models">{$i18n.t('Models')}</a
 							>
 						{/if}
@@ -110,7 +110,7 @@
 									'/workspace/knowledge'
 								)
 									? ''
-									: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
+									: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'} transition"
 								href="/workspace/knowledge"
 							>
 								{$i18n.t('Knowledge')}
@@ -123,7 +123,7 @@
 									'/workspace/prompts'
 								)
 									? ''
-									: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
+									: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'} transition"
 								href="/workspace/prompts">{$i18n.t('Prompts')}</a
 							>
 						{/if}
@@ -132,7 +132,7 @@
 							<a
 								class="min-w-fit rounded-full p-1.5 {$page.url.pathname.includes('/workspace/tools')
 									? ''
-									: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
+									: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'} transition"
 								href="/workspace/tools"
 							>
 								{$i18n.t('Tools')}
@@ -145,7 +145,7 @@
 									'/workspace/metrics'
 								)
 									? ''
-									: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
+									: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'} transition"
 								href="/workspace/metrics"
 							>
 								{$i18n.t('Metrics')}

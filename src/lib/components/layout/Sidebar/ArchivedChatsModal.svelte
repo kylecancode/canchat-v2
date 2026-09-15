@@ -144,7 +144,7 @@
 			<div class=" flex flex-col w-full sm:flex-row sm:justify-center sm:space-x-6">
 				{#if chats.length > 0}
 					<div class="w-full">
-						<div class="text-left text-sm w-full mb-3 max-h-[22rem] overflow-y-scroll">
+						<div class="text-left text-sm w-full mb-3 max-h-[22rem] overflow-y-auto">
 							<div class="relative overflow-x-auto">
 								<table class="w-full text-sm text-left text-gray-600 dark:text-gray-400 table-auto">
 									<thead
@@ -152,7 +152,7 @@
 									>
 										<tr>
 											<th scope="col" class="px-3 py-2"> {$i18n.t('Name')} </th>
-											<th scope="col" class="px-3 py-2 hidden md:flex">
+											<th scope="col" class="px-3 py-2 hidden md:table-cell">
 												{$i18n.t('Created At')}
 											</th>
 											<th scope="col" class="px-3 py-2 text-right" />
@@ -172,9 +172,16 @@
 															</div>
 														</a>
 													</Tooltip>
+													<!-- The Created At column is dropped on narrow screens, so keep the
+													     date visible here instead of losing it entirely. -->
+													<div
+														class="md:hidden text-[11px] text-gray-500 dark:text-gray-400 mt-0.5"
+													>
+														{dayjs(chat.created_at * 1000).format($i18n.t('MMMM DD, YYYY HH:mm'))}
+													</div>
 												</td>
 
-												<td class=" px-3 py-1 hidden md:flex h-[2.5rem]">
+												<td class=" px-3 py-1 hidden md:table-cell h-[2.5rem] whitespace-nowrap">
 													<div class="my-auto">
 														{dayjs(chat.created_at * 1000).format($i18n.t('MMMM DD, YYYY HH:mm'))}
 													</div>

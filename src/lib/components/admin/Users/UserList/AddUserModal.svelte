@@ -119,7 +119,7 @@
 	};
 </script>
 
-<Modal size="sm" bind:show returnfocusSelector="#add-user">
+<Modal size="sm" bind:show returnFocusSelector="#add-user">
 	<div>
 		<div class=" flex justify-between dark:text-gray-300 px-5 pt-4 pb-2">
 			<div class=" text-lg font-medium self-center">{$i18n.t('Add User')}</div>
@@ -156,7 +156,7 @@
 						<button
 							class="min-w-fit rounded-full p-1.5 {tab === ''
 								? ''
-								: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
+								: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'} transition"
 							type="button"
 							on:click={() => {
 								tab = '';
@@ -166,7 +166,7 @@
 						<button
 							class="min-w-fit rounded-full p-1.5 {tab === 'import'
 								? ''
-								: 'text-gray-300 dark:text-gray-600 hover:text-gray-700 dark:hover:text-white'} transition"
+								: 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'} transition"
 							type="button"
 							on:click={() => {
 								tab = 'import';

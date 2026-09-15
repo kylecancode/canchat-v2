@@ -108,6 +108,26 @@
 	let chatIdUnsubscriber: Unsubscriber | undefined;
 
 	let selectedModels = [''];
+
+	// Banner dismissals live in localStorage, which is not reactive: reading it
+	// straight from the {#each} expression re-parsed the JSON on every render and
+	// never re-ran when a banner was dismissed.
+	let dismissedBannerIds: string[] = [];
+
+	const readDismissedBannerIds = () => {
+		try {
+			const stored = JSON.parse(localStorage.getItem('dismissedBannerIds') ?? '[]');
+			return Array.isArray(stored) ? stored : [];
+		} catch (e) {
+			return [];
+		}
+	};
+
+	$: visibleBanners = $banners.filter(
+		(b) =>
+			(b.lang ? b.lang === $i18n.language : true) &&
+			(b.dismissible ? !dismissedBannerIds.includes(b.id) : true)
+	);
 	let atSelectedModel: Model | undefined;
 	let selectedModelIds = [];
 	$: selectedModelIds = atSelectedModel !== undefined ? [atSelectedModel.id] : selectedModels;
@@ -382,6 +402,8 @@
 	};
 
 	onMount(async () => {
+		dismissedBannerIds = readDismissedBannerIds();
+
 		window.addEventListener('message', onMessageHandler);
 		$socket?.on('chat-events', chatEventHandler);
 
@@ -1931,21 +1953,17 @@
 				{#if $banners.length > 0 && !history.currentId && !$chatId && selectedModels.length <= 1}
 					<div class="absolute top-12 left-0 right-0 w-full z-30">
 						<div class=" flex flex-col gap-1 w-full">
-							{#each $banners.filter((b) => (b.lang ? b.lang === $i18n.language : true) && (b.dismissible ? !JSON.parse(localStorage.getItem('dismissedBannerIds') ?? '[]').includes(b.id) : true)) as banner}
+							{#each visibleBanners as banner (banner.id)}
 								<Banner
 									{banner}
 									on:dismiss={(e) => {
 										const bannerId = e.detail;
 
-										localStorage.setItem(
-											'dismissedBannerIds',
-											JSON.stringify(
-												[
-													bannerId,
-													...JSON.parse(localStorage.getItem('dismissedBannerIds') ?? '[]')
-												].filter((id) => $banners.find((b) => b.id === id))
-											)
+										dismissedBannerIds = [bannerId, ...readDismissedBannerIds()].filter((id) =>
+											$banners.find((b) => b.id === id)
 										);
+
+										localStorage.setItem('dismissedBannerIds', JSON.stringify(dismissedBannerIds));
 									}}
 								/>
 							{/each}
