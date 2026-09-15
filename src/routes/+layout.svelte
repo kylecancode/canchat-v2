@@ -36,6 +36,8 @@
 
 	import '../tailwind.css';
 	import '../app.css';
+	import '$lib/styles/themes.css';
+	import { applyTheme, resolveThemeMode } from '$lib/themes';
 
 	import 'tippy.js/dist/tippy.css';
 
@@ -251,7 +253,9 @@
 		// Call visibility change handler initially to set state on load
 		handleVisibilityChange();
 
-		theme.set(localStorage.theme);
+		theme.set(localStorage.theme ?? 'system');
+		// Re-apply on load so a theme's tokens survive a hard refresh.
+		applyTheme(localStorage.theme ?? 'system');
 
 		mobile.set(window.innerWidth < BREAKPOINT);
 		const onResize = () => {
@@ -401,13 +405,7 @@
 {/if}
 
 <Toaster
-	theme={$theme.includes('dark')
-		? 'dark'
-		: $theme === 'system'
-			? window.matchMedia('(prefers-color-scheme: dark)').matches
-				? 'dark'
-				: 'light'
-			: 'light'}
+	theme={resolveThemeMode($theme)}
 	richColors
 	position="top-right"
 	toastOptions={{

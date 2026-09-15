@@ -26,37 +26,78 @@
 		</script>
 
 		<script>
-			// On page load or when changing themes, best to add inline in `head` to avoid FOUC
+			// On page load or when changing themes, best to add inline in `head` to avoid FOUC.
+			// The theme table itself lives in src/lib/themes/index.ts; applyTheme() mirrors the
+			// resolved values into localStorage so this script never has to duplicate it.
 			(() => {
 				const metaThemeColorTag = document.querySelector('meta[name="theme-color"]');
-				const prefersDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+				const root = document.documentElement;
+				const media = window.matchMedia('(prefers-color-scheme: dark)');
 
-				if (!localStorage?.theme) {
-					localStorage.theme = 'system';
-				}
+				const read = (key, fallback) => {
+					try {
+						return localStorage.getItem(key) ?? fallback;
+					} catch (e) {
+						return fallback;
+					}
+				};
 
-				if (localStorage.theme === 'system') {
-					document.documentElement.classList.add(prefersDarkTheme ? 'dark' : 'light');
-					metaThemeColorTag.setAttribute('content', prefersDarkTheme ? '#171717' : '#ffffff');
-				} else if (localStorage.theme === 'dark') {
-					document.documentElement.classList.add('dark');
-					metaThemeColorTag.setAttribute('content', '#171717');
-				} else {
-					document.documentElement.classList.add('light');
-					metaThemeColorTag.setAttribute('content', '#ffffff');
-				}
+				const write = (key, value) => {
+					try {
+						localStorage.setItem(key, value);
+					} catch (e) {
+						// storage disabled — the theme still applies for this page view
+					}
+				};
 
-				window.matchMedia('(prefers-color-scheme: dark)').addListener((e) => {
-					if (localStorage.theme === 'system') {
-						if (e.matches) {
-							document.documentElement.classList.add('dark');
-							document.documentElement.classList.remove('light');
-							metaThemeColorTag.setAttribute('content', '#171717');
-						} else {
-							document.documentElement.classList.add('light');
-							document.documentElement.classList.remove('dark');
-							metaThemeColorTag.setAttribute('content', '#ffffff');
-						}
+				const paint = () => {
+					const theme = read('theme', null) || 'system';
+					if (theme === 'system') {
+						write('theme', 'system');
+					}
+
+					const isBuiltIn = theme === 'system' || theme === 'dark' || theme === 'light';
+					const systemMode = media.matches ? 'dark' : 'light';
+					const mode = isBuiltIn
+						? theme === 'system'
+							? systemMode
+							: theme
+						: read('themeMode', 'dark');
+
+					const metaColor = isBuiltIn
+						? mode === 'dark'
+							? '#171717'
+							: '#ffffff'
+						: read('themeMeta', '#171717');
+
+					const splash = isBuiltIn
+						? mode === 'dark'
+							? '#000000'
+							: '#ffffff'
+						: read('themeSplash', '#000000');
+
+					const invert = isBuiltIn ? mode === 'dark' : read('themeSplashInvert', '1') === '1';
+
+					root.classList.remove('dark', 'light');
+					root.classList.add(mode);
+
+					if (isBuiltIn) {
+						root.removeAttribute('data-theme');
+					} else {
+						root.setAttribute('data-theme', theme);
+						root.classList.add(theme);
+					}
+
+					metaThemeColorTag.setAttribute('content', metaColor);
+					root.style.setProperty('--splash-bg', splash);
+					root.style.setProperty('--splash-logo-filter', invert ? 'invert(1)' : 'none');
+				};
+
+				paint();
+
+				media.addEventListener('change', () => {
+					if (read('theme', 'system') === 'system') {
+						paint();
 					}
 				});
 			})();
@@ -156,15 +197,19 @@
 	}
 
 	#splash-screen {
-		background: #fff;
+		background: var(--splash-bg, #fff);
+	}
+
+	html[data-theme] #splash-screen img {
+		filter: var(--splash-logo-filter, none);
 	}
 
 	html.dark #splash-screen {
-		background: #000;
+		background: var(--splash-bg, #000);
 	}
 
 	html.dark #splash-screen img {
-		filter: invert(1);
+		filter: var(--splash-logo-filter, invert(1));
 	}
 
 	html.her #splash-screen {

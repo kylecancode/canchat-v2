@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **🎨 Custom Themes**: Added ten custom themes — Aurora, Synthwave, Phosphor, Nebula, Ember, Evergreen, Deco, Paper, Sakura and Brutalist — selectable from Settings → General. Each theme restyles colour, typography, border radii, interface density, backdrops and effects, and the picker previews every theme before it is applied.
+
 ## [0.5.7-ccv2-1.10.0] - 2025-12-08
 
 ### Added

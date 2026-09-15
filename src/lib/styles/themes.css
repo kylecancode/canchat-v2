@@ -1,0 +1,1249 @@
+/*
+ * CANChat custom themes.
+ * ---------------------------------------------------------------------------
+ * A theme is a block of design tokens on `html[data-theme='<id>']`. The tokens
+ * drive four things, not just colour:
+ *
+ *   1. Palette   — the whole Tailwind gray ramp plus white/black/accent, wired
+ *                  up as RGB channel variables in `tailwind.config.js`.
+ *   2. Type      — sans / display / serif / mono stacks, tracking, leading.
+ *   3. Shape     — the Tailwind border-radius scale and root font size, so a
+ *                  theme can be pillowy and roomy or square and dense.
+ *   4. Atmosphere— page backdrops, textures, glows, shadows, motion.
+ *
+ * The "Shared chrome" section below consumes those tokens once so individual
+ * themes only ever declare values. Keep it that way.
+ */
+
+/* ------------------------------------------------------------------ *
+ * Defaults — also the values used by the built-in dark/light themes.
+ * ------------------------------------------------------------------ */
+:root {
+	--radius-sm: 0.125rem;
+	--radius-base: 0.25rem;
+	--radius-md: 0.375rem;
+	--radius-lg: 0.5rem;
+	--radius-xl: 0.75rem;
+	--radius-2xl: 1rem;
+	--radius-3xl: 1.5rem;
+
+	--font-sans: -apple-system, BlinkMacSystemFont, 'Inter', ui-sans-serif, system-ui, 'Segoe UI',
+		Roboto, Ubuntu, Cantarell, 'Noto Sans', sans-serif, 'Helvetica Neue', Arial, 'Apple Color Emoji',
+		'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+	--font-display: var(--font-sans);
+	--font-serif: 'InstrumentSerif', ui-serif, Georgia, serif;
+	--font-mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+
+	--splash-bg: #ffffff;
+	--splash-logo-filter: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * Shared chrome — every custom theme gets this, driven by its tokens.
+ * ------------------------------------------------------------------ */
+
+html[data-theme] {
+	font-size: var(--ui-font-size, 16px);
+}
+
+html[data-theme],
+html[data-theme] body,
+html[data-theme] input,
+html[data-theme] textarea,
+html[data-theme] select,
+html[data-theme] button {
+	font-family: var(--font-sans);
+	letter-spacing: var(--tracking, normal);
+}
+
+html[data-theme] .font-primary,
+html[data-theme] h1,
+html[data-theme] h2,
+html[data-theme] h3 {
+	font-family: var(--font-display);
+	letter-spacing: var(--display-tracking, var(--tracking, normal));
+	font-weight: var(--display-weight, 600);
+	text-transform: var(--display-transform, none);
+}
+
+html[data-theme] .font-secondary {
+	font-family: var(--font-serif);
+}
+
+html[data-theme] pre,
+html[data-theme] code,
+html[data-theme] .codespan,
+html[data-theme] .cm-editor,
+html[data-theme] .tiptap > pre {
+	font-family: var(--font-mono);
+}
+
+html[data-theme] .markdown-prose,
+html[data-theme] .markdown-prose-xs {
+	font-family: var(--font-body, var(--font-sans));
+	line-height: var(--prose-leading, 1.6);
+}
+
+/* Page backdrop: `::before` is the animated atmosphere, `::after` the texture.
+   Both sit behind the shell's content via the isolated stacking context. */
+html[data-theme] .app-shell {
+	/* `isolation` (rather than `position`) makes the pseudo-element layers below
+	   paint above this element's own background without disturbing layout. */
+	isolation: isolate;
+	background: var(--page-bg);
+	background-attachment: fixed;
+}
+
+html[data-theme] .app-shell::before,
+html[data-theme] .app-shell::after {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+}
+
+html[data-theme] .app-shell::before {
+	background: var(--atmosphere, none);
+	background-size: var(--atmosphere-size, cover);
+	opacity: var(--atmosphere-opacity, 1);
+	filter: var(--atmosphere-filter, none);
+	-webkit-mask-image: var(--atmosphere-mask, none);
+	mask-image: var(--atmosphere-mask, none);
+	animation: var(--atmosphere-animation, none);
+	will-change: transform, opacity;
+}
+
+html[data-theme] .app-shell::after {
+	background: var(--page-texture, none);
+	background-size: var(--page-texture-size, auto);
+	opacity: var(--page-texture-opacity, 1);
+	mix-blend-mode: var(--page-texture-blend, normal);
+	animation: var(--page-texture-animation, none);
+}
+
+html[data-theme] #sidebar {
+	background: var(--sidebar-bg);
+	border-right: var(--sidebar-border, none);
+	backdrop-filter: var(--sidebar-blur, none);
+	-webkit-backdrop-filter: var(--sidebar-blur, none);
+}
+
+/* Primary action buttons (`bg-black text-white dark:bg-white dark:text-black`). */
+html[data-theme] .bg-black.text-white,
+html[data-theme].dark .dark\:bg-white.dark\:text-black {
+	background: var(--btn-primary-bg);
+	color: var(--btn-primary-ink);
+	box-shadow: var(--btn-primary-shadow, none);
+	border: var(--btn-primary-border, none);
+	transition:
+		box-shadow 0.2s ease,
+		transform 0.2s ease,
+		filter 0.2s ease;
+}
+
+html[data-theme] .bg-black.text-white:hover:not(:disabled),
+html[data-theme].dark .dark\:bg-white.dark\:text-black:hover:not(:disabled) {
+	box-shadow: var(--btn-primary-shadow-hover, var(--btn-primary-shadow, none));
+	transform: var(--btn-primary-hover-transform, none);
+	filter: var(--btn-primary-hover-filter, none);
+}
+
+/* The prompt box — the single most-looked-at surface in the app. */
+html[data-theme] .chat-input-shell {
+	background: var(--input-bg);
+	border: var(--input-border, none);
+	box-shadow: var(--input-shadow, none);
+	backdrop-filter: var(--panel-blur, none);
+	-webkit-backdrop-filter: var(--panel-blur, none);
+	transition:
+		box-shadow 0.25s ease,
+		border-color 0.25s ease,
+		background 0.25s ease;
+}
+
+html[data-theme] .chat-input-shell:focus-within {
+	border: var(--input-border-focus, var(--input-border, none));
+	box-shadow: var(--input-shadow-focus, var(--input-shadow, none));
+}
+
+html[data-theme] .modal {
+	background: var(--scrim, rgb(0 0 0 / 0.6));
+	backdrop-filter: var(--scrim-blur, none);
+	-webkit-backdrop-filter: var(--scrim-blur, none);
+}
+
+html[data-theme] ::selection {
+	background: var(--selection-bg);
+	color: var(--selection-ink);
+}
+
+html[data-theme] ::-webkit-scrollbar-thumb {
+	background-color: var(--scrollbar);
+	border-color: transparent;
+}
+
+html[data-theme] :focus-visible {
+	outline: 2px solid rgb(var(--color-accent));
+	outline-offset: 2px;
+}
+
+html[data-theme] hr,
+html[data-theme] .markdown-prose hr {
+	border-color: var(--rule);
+}
+
+html[data-theme] .markdown a,
+html[data-theme] .markdown-prose a {
+	color: rgb(var(--color-accent));
+	text-decoration-color: rgb(var(--color-accent) / 0.45);
+	text-underline-offset: 2px;
+}
+
+html[data-theme] .codespan,
+html[data-theme] .tiptap p code {
+	color: var(--code-inline);
+	background: var(--code-inline-bg);
+}
+
+html[data-theme] pre > code.hljs,
+html[data-theme] .tiptap > pre {
+	background: var(--code-bg) !important;
+	box-shadow: var(--code-ring, none);
+}
+
+html[data-theme] .shimmer {
+	background: linear-gradient(
+		90deg,
+		rgb(var(--color-gray-500)) 25%,
+		rgb(var(--color-accent)) 50%,
+		rgb(var(--color-gray-500)) 75%
+	);
+	background-size: 200% 100%;
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	color: rgb(var(--color-gray-500));
+}
+
+/* Splash screen (pre-hydration) picks up the stored theme colours. */
+html[data-theme] #splash-screen {
+	background: var(--splash-bg) !important;
+}
+
+html[data-theme] #splash-screen img {
+	filter: var(--splash-logo-filter) !important;
+}
+
+/* ------------------------------------------------------------------ *
+ * Keyframes shared by the atmosphere layers.
+ * ------------------------------------------------------------------ */
+@keyframes theme-drift {
+	0% {
+		transform: translate3d(-3%, -2%, 0) scale(1.08);
+	}
+	50% {
+		transform: translate3d(3%, 2%, 0) scale(1.14);
+	}
+	100% {
+		transform: translate3d(-3%, -2%, 0) scale(1.08);
+	}
+}
+
+@keyframes theme-breathe {
+	0%,
+	100% {
+		opacity: 0.55;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+@keyframes theme-scan {
+	0% {
+		background-position: 0 0;
+	}
+	100% {
+		background-position: 0 100vh;
+	}
+}
+
+@keyframes theme-flicker {
+	0%,
+	97%,
+	100% {
+		opacity: var(--flicker-high, 1);
+	}
+	98% {
+		opacity: var(--flicker-low, 0.82);
+	}
+	99% {
+		opacity: 1;
+	}
+}
+
+@keyframes theme-twinkle {
+	0%,
+	100% {
+		opacity: 0.35;
+	}
+	50% {
+		opacity: 0.85;
+	}
+}
+
+@keyframes theme-rise {
+	0% {
+		transform: translate3d(0, 6%, 0);
+		opacity: 0.35;
+	}
+	50% {
+		opacity: 0.8;
+	}
+	100% {
+		transform: translate3d(0, -8%, 0);
+		opacity: 0.35;
+	}
+}
+
+@keyframes theme-fall {
+	0% {
+		background-position:
+			0 -20vh,
+			0 -40vh,
+			0 -10vh;
+	}
+	100% {
+		background-position:
+			10vw 120vh,
+			-8vw 120vh,
+			4vw 120vh;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html[data-theme] .app-shell::before,
+	html[data-theme] .app-shell::after {
+		animation: none !important;
+	}
+}
+
+/* ================================================================== *
+ * 1. AURORA — midnight glass, slow northern lights
+ * ================================================================== */
+html[data-theme='aurora'] {
+	--color-gray-50: 240 248 255;
+	--color-gray-100: 226 240 252;
+	--color-gray-200: 206 228 246;
+	--color-gray-300: 178 205 232;
+	--color-gray-400: 140 172 208;
+	--color-gray-500: 110 140 180;
+	--color-gray-600: 84 110 148;
+	--color-gray-700: 44 62 94;
+	--color-gray-800: 27 40 66;
+	--color-gray-850: 19 30 51;
+	--color-gray-900: 11 18 33;
+	--color-gray-950: 7 12 24;
+	--color-white: 233 246 255;
+	--color-black: 6 10 20;
+	--color-accent: 94 234 212;
+	--color-accent-soft: 129 140 248;
+	--color-accent-alt: 192 132 252;
+	--color-accent-ink: 4 22 28;
+
+	--ui-font-size: 16.25px;
+	--font-sans: 'Inter', -apple-system, BlinkMacSystemFont, ui-sans-serif, system-ui, sans-serif;
+	--font-display: 'Archivo', 'Inter', sans-serif;
+	--tracking: 0.004em;
+	--display-tracking: -0.015em;
+	--prose-leading: 1.72;
+
+	--radius-sm: 0.3rem;
+	--radius-base: 0.45rem;
+	--radius-md: 0.6rem;
+	--radius-lg: 0.85rem;
+	--radius-xl: 1.1rem;
+	--radius-2xl: 1.4rem;
+	--radius-3xl: 1.9rem;
+
+	--page-bg: linear-gradient(175deg, #0b1221 0%, #0d1830 55%, #0a1526 100%);
+	--atmosphere: radial-gradient(58% 42% at 16% 4%, rgba(94, 234, 212, 0.34) 0%, transparent 62%),
+		radial-gradient(54% 44% at 84% 12%, rgba(129, 140, 248, 0.36) 0%, transparent 64%),
+		radial-gradient(70% 46% at 50% 102%, rgba(192, 132, 252, 0.3) 0%, transparent 66%),
+		radial-gradient(40% 26% at 62% 44%, rgba(56, 189, 248, 0.16) 0%, transparent 70%);
+	--atmosphere-animation: theme-drift 34s ease-in-out infinite;
+	--page-texture: radial-gradient(circle at 50% -10%, rgba(94, 234, 212, 0.09), transparent 55%);
+
+	--sidebar-bg: linear-gradient(180deg, rgba(7, 12, 24, 0.94) 0%, rgba(11, 20, 38, 0.88) 100%);
+	--sidebar-border: 1px solid rgb(94 234 212 / 0.14);
+	--sidebar-blur: blur(14px) saturate(1.2);
+	--panel-blur: blur(14px) saturate(1.25);
+
+	--btn-primary-bg: linear-gradient(135deg, #5eead4 0%, #818cf8 100%);
+	--btn-primary-ink: #04161c;
+	--btn-primary-shadow: 0 6px 22px -6px rgb(94 234 212 / 0.55);
+	--btn-primary-shadow-hover: 0 12px 32px -6px rgb(129 140 248 / 0.7);
+	--btn-primary-hover-transform: translateY(-1px);
+
+	--input-bg: linear-gradient(180deg, rgb(23 36 62 / 0.72), rgb(14 24 44 / 0.72));
+	--input-border: 1px solid rgb(94 234 212 / 0.18);
+	--input-shadow: 0 10px 40px -18px rgb(0 0 0 / 0.9);
+	--input-border-focus: 1px solid rgb(94 234 212 / 0.55);
+	--input-shadow-focus: 0 0 0 3px rgb(94 234 212 / 0.12), 0 18px 50px -20px rgb(94 234 212 / 0.5);
+
+	--scrim: rgb(4 9 20 / 0.72);
+	--scrim-blur: blur(6px);
+	--scrollbar: rgb(94 234 212 / 0.35);
+	--selection-bg: rgb(94 234 212 / 0.28);
+	--selection-ink: #eafffb;
+	--rule: rgb(94 234 212 / 0.16);
+	--code-bg: linear-gradient(180deg, rgb(10 20 38 / 0.96), rgb(8 15 30 / 0.96));
+	--code-ring: inset 0 0 0 1px rgb(94 234 212 / 0.14);
+	--code-inline: #7dd3fc;
+	--code-inline-bg: rgb(94 234 212 / 0.1);
+	--shadow-md: 0 8px 24px -12px rgb(0 0 0 / 0.8);
+	--shadow-lg: 0 24px 60px -24px rgb(0 0 0 / 0.9);
+	--glow: 0 0 24px rgb(94 234 212 / 0.35);
+}
+
+/* ================================================================== *
+ * 2. SYNTHWAVE — neon grid, chrome edges, 1984 forever
+ * ================================================================== */
+html[data-theme='synthwave'] {
+	--color-gray-50: 250 242 255;
+	--color-gray-100: 243 230 255;
+	--color-gray-200: 232 214 250;
+	--color-gray-300: 216 194 245;
+	--color-gray-400: 192 164 232;
+	--color-gray-500: 160 128 212;
+	--color-gray-600: 130 96 190;
+	--color-gray-700: 76 41 130;
+	--color-gray-800: 52 27 94;
+	--color-gray-850: 38 19 71;
+	--color-gray-900: 26 12 51;
+	--color-gray-950: 13 6 32;
+	--color-white: 255 240 252;
+	--color-black: 10 4 26;
+	--color-accent: 255 46 151;
+	--color-accent-soft: 0 229 255;
+	--color-accent-alt: 255 224 102;
+	--color-accent-ink: 20 2 28;
+
+	--ui-font-size: 15.75px;
+	--font-sans: 'Archivo', 'Inter', ui-sans-serif, system-ui, sans-serif;
+	--font-display: 'Archivo', sans-serif;
+	--font-mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, monospace;
+	--tracking: 0.012em;
+	--display-tracking: 0.1em;
+	--display-transform: uppercase;
+	--display-weight: 700;
+	--prose-leading: 1.62;
+
+	--radius-sm: 0.05rem;
+	--radius-base: 0.1rem;
+	--radius-md: 0.15rem;
+	--radius-lg: 0.25rem;
+	--radius-xl: 0.35rem;
+	--radius-2xl: 0.45rem;
+	--radius-3xl: 0.6rem;
+
+	--page-bg: linear-gradient(180deg, #14082b 0%, #1a0c33 45%, #2b1354 100%);
+	/* Perspective grid rushing to a horizon, plus a setting-sun glow. */
+	--atmosphere: radial-gradient(60% 34% at 50% 72%, rgba(255, 46, 151, 0.35) 0%, transparent 70%),
+		repeating-linear-gradient(
+			180deg,
+			transparent 0px,
+			transparent 38px,
+			rgba(0, 229, 255, 0.16) 38px,
+			rgba(0, 229, 255, 0.16) 39px
+		),
+		repeating-linear-gradient(
+			90deg,
+			transparent 0px,
+			transparent 56px,
+			rgba(255, 46, 151, 0.14) 56px,
+			rgba(255, 46, 151, 0.14) 57px
+		);
+	--atmosphere-opacity: 0.85;
+	--atmosphere-animation: theme-breathe 12s ease-in-out infinite;
+	--page-texture: linear-gradient(0deg, rgba(0, 229, 255, 0.1) 0%, transparent 28%);
+
+	--sidebar-bg: linear-gradient(180deg, #120629 0%, #1d0d3c 100%);
+	--sidebar-border: 1px solid rgb(255 46 151 / 0.35);
+	--panel-blur: none;
+
+	--btn-primary-bg: linear-gradient(135deg, #ff2e97 0%, #ff6ec7 55%, #00e5ff 100%);
+	--btn-primary-ink: #14021c;
+	--btn-primary-shadow: 0 0 18px rgb(255 46 151 / 0.6), inset 0 0 0 1px rgb(255 224 102 / 0.4);
+	--btn-primary-shadow-hover: 0 0 30px rgb(0 229 255 / 0.75), inset 0 0 0 1px rgb(255 224 102 / 0.7);
+
+	--input-bg: linear-gradient(180deg, rgb(45 20 84 / 0.9), rgb(30 13 60 / 0.9));
+	--input-border: 1px solid rgb(0 229 255 / 0.35);
+	--input-shadow: 0 0 22px -6px rgb(255 46 151 / 0.45);
+	--input-border-focus: 1px solid rgb(255 46 151 / 0.75);
+	--input-shadow-focus: 0 0 0 2px rgb(255 46 151 / 0.25), 0 0 34px -4px rgb(0 229 255 / 0.6);
+
+	--scrim: rgb(9 3 22 / 0.78);
+	--scrim-blur: blur(3px) saturate(1.4);
+	--scrollbar: rgb(255 46 151 / 0.5);
+	--selection-bg: rgb(0 229 255 / 0.35);
+	--selection-ink: #fff0fc;
+	--rule: rgb(255 46 151 / 0.3);
+	--code-bg: linear-gradient(180deg, #231046 0%, #1a0c33 100%);
+	--code-ring: inset 0 0 0 1px rgb(0 229 255 / 0.25);
+	--code-inline: #ffe066;
+	--code-inline-bg: rgb(255 46 151 / 0.16);
+	--shadow-md: 0 0 18px -6px rgb(255 46 151 / 0.5);
+	--shadow-lg: 0 0 40px -10px rgb(0 229 255 / 0.55);
+	--glow: 0 0 20px rgb(255 46 151 / 0.6);
+}
+
+/* Neon signage: headings get a real sign-glow, not just a colour. */
+html[data-theme='synthwave'] h1,
+html[data-theme='synthwave'] h2,
+html[data-theme='synthwave'] .font-primary {
+	text-shadow:
+		0 0 6px rgb(255 46 151 / 0.55),
+		0 0 22px rgb(255 46 151 / 0.35);
+}
+
+/* ================================================================== *
+ * 3. PHOSPHOR — CRT terminal, scanlines, green glow
+ * ================================================================== */
+html[data-theme='phosphor'] {
+	--color-gray-50: 224 255 230;
+	--color-gray-100: 198 255 208;
+	--color-gray-200: 166 244 182;
+	--color-gray-300: 124 226 146;
+	--color-gray-400: 88 190 112;
+	--color-gray-500: 62 140 82;
+	--color-gray-600: 46 108 64;
+	--color-gray-700: 18 46 28;
+	--color-gray-800: 10 26 16;
+	--color-gray-850: 6 16 10;
+	--color-gray-900: 2 8 4;
+	--color-gray-950: 0 0 0;
+	--color-white: 190 255 200;
+	--color-black: 0 3 1;
+	--color-accent: 57 255 20;
+	--color-accent-soft: 125 255 176;
+	--color-accent-alt: 182 255 106;
+	--color-accent-ink: 0 16 4;
+
+	--ui-font-size: 15px;
+	--font-sans: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+	--font-display: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, monospace;
+	--font-body: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, monospace;
+	--tracking: 0.02em;
+	--display-tracking: 0.16em;
+	--display-transform: uppercase;
+	--display-weight: 500;
+	--prose-leading: 1.55;
+
+	--radius-sm: 0;
+	--radius-base: 0;
+	--radius-md: 0;
+	--radius-lg: 0;
+	--radius-xl: 0;
+	--radius-2xl: 0;
+	--radius-3xl: 0;
+
+	--page-bg: radial-gradient(120% 100% at 50% 50%, #04140a 0%, #010603 70%, #000000 100%);
+	--atmosphere: radial-gradient(75% 60% at 50% 45%, rgba(57, 255, 20, 0.12) 0%, transparent 72%);
+	--atmosphere-animation: theme-flicker 7s steps(1, end) infinite;
+	--flicker-high: 1;
+	--flicker-low: 0.78;
+	/* Scanlines, forever creeping downward. */
+	--page-texture: repeating-linear-gradient(
+			0deg,
+			rgba(0, 0, 0, 0.42) 0px,
+			rgba(0, 0, 0, 0.42) 1px,
+			transparent 1px,
+			transparent 3px
+		),
+		linear-gradient(0deg, rgba(57, 255, 20, 0.05), rgba(57, 255, 20, 0.05));
+	--page-texture-opacity: 0.55;
+	--page-texture-animation: theme-scan 10s linear infinite;
+
+	--sidebar-bg: #000000;
+	--sidebar-border: 1px solid rgb(57 255 20 / 0.28);
+
+	--btn-primary-bg: #0a2a10;
+	--btn-primary-ink: #39ff14;
+	--btn-primary-border: 1px solid rgb(57 255 20 / 0.7);
+	--btn-primary-shadow: 0 0 10px rgb(57 255 20 / 0.35), inset 0 0 12px rgb(57 255 20 / 0.15);
+	--btn-primary-shadow-hover: 0 0 20px rgb(57 255 20 / 0.7), inset 0 0 18px rgb(57 255 20 / 0.3);
+
+	--input-bg: rgb(3 14 7 / 0.92);
+	--input-border: 1px solid rgb(57 255 20 / 0.35);
+	--input-shadow: inset 0 0 22px rgb(57 255 20 / 0.08);
+	--input-border-focus: 1px solid rgb(57 255 20 / 0.85);
+	--input-shadow-focus: 0 0 0 1px rgb(57 255 20 / 0.5), inset 0 0 26px rgb(57 255 20 / 0.18);
+
+	--scrim: rgb(0 0 0 / 0.86);
+	--scrollbar: rgb(57 255 20 / 0.45);
+	--selection-bg: rgb(57 255 20 / 0.35);
+	--selection-ink: #001a06;
+	--rule: rgb(57 255 20 / 0.28);
+	--code-bg: #000804;
+	--code-ring: inset 0 0 0 1px rgb(57 255 20 / 0.3);
+	--code-inline: #b6ff6a;
+	--code-inline-bg: rgb(57 255 20 / 0.12);
+	--shadow-md: 0 0 0 1px rgb(57 255 20 / 0.25);
+	--shadow-lg: 0 0 26px -6px rgb(57 255 20 / 0.5);
+	--glow: 0 0 14px rgb(57 255 20 / 0.5);
+}
+
+/* Phosphor persistence: text carries its own faint halo. */
+html[data-theme='phosphor'] body {
+	text-shadow: 0 0 5px rgb(57 255 20 / 0.28);
+}
+
+/* No pills: square everything that is not a photo. */
+html[data-theme='phosphor'] .rounded-full:not(img) {
+	border-radius: 0;
+}
+
+/* ================================================================== *
+ * 4. NEBULA — deep space, drifting clouds, quiet stars
+ * ================================================================== */
+html[data-theme='nebula'] {
+	--color-gray-50: 247 244 255;
+	--color-gray-100: 238 232 253;
+	--color-gray-200: 224 216 248;
+	--color-gray-300: 202 190 238;
+	--color-gray-400: 172 156 220;
+	--color-gray-500: 138 120 196;
+	--color-gray-600: 104 86 168;
+	--color-gray-700: 48 36 96;
+	--color-gray-800: 28 21 62;
+	--color-gray-850: 18 14 42;
+	--color-gray-900: 10 8 26;
+	--color-gray-950: 5 4 15;
+	--color-white: 240 236 255;
+	--color-black: 4 3 12;
+	--color-accent: 168 85 247;
+	--color-accent-soft: 56 189 248;
+	--color-accent-alt: 244 114 182;
+	--color-accent-ink: 12 4 28;
+
+	--ui-font-size: 16px;
+	--font-sans: 'Mona Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+	--font-display: 'Mona Sans', 'Archivo', sans-serif;
+	--tracking: 0.002em;
+	--display-tracking: -0.01em;
+	--prose-leading: 1.68;
+
+	--radius-sm: 0.25rem;
+	--radius-base: 0.4rem;
+	--radius-md: 0.55rem;
+	--radius-lg: 0.75rem;
+	--radius-xl: 1rem;
+	--radius-2xl: 1.25rem;
+	--radius-3xl: 1.75rem;
+
+	--page-bg: radial-gradient(140% 110% at 50% 0%, #140f33 0%, #0a081a 55%, #05040f 100%);
+	--atmosphere: radial-gradient(48% 38% at 22% 26%, rgba(168, 85, 247, 0.4) 0%, transparent 66%),
+		radial-gradient(42% 34% at 78% 66%, rgba(56, 189, 248, 0.32) 0%, transparent 66%),
+		radial-gradient(34% 30% at 62% 14%, rgba(244, 114, 182, 0.28) 0%, transparent 70%);
+	--atmosphere-filter: blur(18px);
+	--atmosphere-animation: theme-drift 48s ease-in-out infinite;
+	/* A scatter of stars — three sizes so the field does not read as a grid. */
+	--page-texture: radial-gradient(1.4px 1.4px at 12% 18%, rgba(255, 255, 255, 0.9), transparent 60%),
+		radial-gradient(1px 1px at 34% 62%, rgba(255, 255, 255, 0.75), transparent 60%),
+		radial-gradient(1.6px 1.6px at 58% 28%, rgba(224, 216, 248, 0.85), transparent 60%),
+		radial-gradient(1px 1px at 72% 74%, rgba(255, 255, 255, 0.7), transparent 60%),
+		radial-gradient(1.2px 1.2px at 88% 42%, rgba(255, 255, 255, 0.8), transparent 60%),
+		radial-gradient(1px 1px at 24% 84%, rgba(255, 255, 255, 0.65), transparent 60%),
+		radial-gradient(1.3px 1.3px at 46% 8%, rgba(255, 255, 255, 0.8), transparent 60%),
+		radial-gradient(1px 1px at 92% 88%, rgba(255, 255, 255, 0.6), transparent 60%);
+	--page-texture-size: 420px 420px;
+	--page-texture-opacity: 0.9;
+	--page-texture-animation: theme-twinkle 9s ease-in-out infinite;
+
+	--sidebar-bg: linear-gradient(180deg, rgba(5, 4, 15, 0.94) 0%, rgba(14, 11, 34, 0.9) 100%);
+	--sidebar-border: 1px solid rgb(168 85 247 / 0.18);
+	--sidebar-blur: blur(12px);
+	--panel-blur: blur(12px) saturate(1.2);
+
+	--btn-primary-bg: linear-gradient(135deg, #a855f7 0%, #6366f1 50%, #38bdf8 100%);
+	--btn-primary-ink: #f5f0ff;
+	--btn-primary-shadow: 0 8px 26px -8px rgb(168 85 247 / 0.7);
+	--btn-primary-shadow-hover: 0 14px 38px -8px rgb(56 189 248 / 0.75);
+	--btn-primary-hover-transform: translateY(-1px) scale(1.01);
+
+	--input-bg: linear-gradient(180deg, rgb(26 20 58 / 0.78), rgb(14 11 34 / 0.78));
+	--input-border: 1px solid rgb(168 85 247 / 0.24);
+	--input-shadow: 0 14px 48px -22px rgb(0 0 0 / 0.95);
+	--input-border-focus: 1px solid rgb(168 85 247 / 0.6);
+	--input-shadow-focus: 0 0 0 3px rgb(168 85 247 / 0.16), 0 20px 56px -22px rgb(56 189 248 / 0.55);
+
+	--scrim: rgb(3 2 10 / 0.76);
+	--scrim-blur: blur(8px);
+	--scrollbar: rgb(168 85 247 / 0.4);
+	--selection-bg: rgb(168 85 247 / 0.32);
+	--selection-ink: #f7f4ff;
+	--rule: rgb(168 85 247 / 0.2);
+	--code-bg: linear-gradient(180deg, rgb(20 15 48 / 0.96), rgb(10 8 26 / 0.96));
+	--code-ring: inset 0 0 0 1px rgb(168 85 247 / 0.18);
+	--code-inline: #f472b6;
+	--code-inline-bg: rgb(168 85 247 / 0.14);
+	--shadow-md: 0 10px 28px -14px rgb(0 0 0 / 0.85);
+	--shadow-lg: 0 28px 70px -28px rgb(0 0 0 / 0.95);
+	--glow: 0 0 28px rgb(168 85 247 / 0.4);
+}
+
+/* ================================================================== *
+ * 5. EMBER — banked coals, warm ash, molten accents
+ * ================================================================== */
+html[data-theme='ember'] {
+	--color-gray-50: 255 246 238;
+	--color-gray-100: 252 236 222;
+	--color-gray-200: 246 218 196;
+	--color-gray-300: 234 190 160;
+	--color-gray-400: 212 152 116;
+	--color-gray-500: 180 116 84;
+	--color-gray-600: 146 86 60;
+	--color-gray-700: 86 43 28;
+	--color-gray-800: 58 28 19;
+	--color-gray-850: 42 20 14;
+	--color-gray-900: 28 13 9;
+	--color-gray-950: 18 8 6;
+	--color-white: 255 245 235;
+	--color-black: 14 6 4;
+	--color-accent: 255 107 53;
+	--color-accent-soft: 255 182 39;
+	--color-accent-alt: 255 46 99;
+	--color-accent-ink: 32 10 4;
+
+	--ui-font-size: 16px;
+	--font-sans: 'Inter', -apple-system, BlinkMacSystemFont, ui-sans-serif, system-ui, sans-serif;
+	--font-display: 'Archivo', 'Inter', sans-serif;
+	--tracking: 0.003em;
+	--display-tracking: -0.02em;
+	--display-weight: 700;
+	--prose-leading: 1.66;
+
+	--radius-sm: 0.2rem;
+	--radius-base: 0.3rem;
+	--radius-md: 0.45rem;
+	--radius-lg: 0.65rem;
+	--radius-xl: 0.9rem;
+	--radius-2xl: 1.15rem;
+	--radius-3xl: 1.6rem;
+
+	--page-bg: linear-gradient(180deg, #170b07 0%, #1c0d09 55%, #2a130d 100%);
+	/* Heat rising off the bottom edge of the screen. */
+	--atmosphere: radial-gradient(85% 55% at 50% 104%, rgba(255, 107, 53, 0.55) 0%, transparent 72%),
+		radial-gradient(55% 42% at 12% 96%, rgba(255, 46, 99, 0.38) 0%, transparent 74%),
+		radial-gradient(50% 38% at 90% 92%, rgba(255, 182, 39, 0.32) 0%, transparent 74%);
+	--atmosphere-animation: theme-rise 16s ease-in-out infinite;
+	--page-texture: radial-gradient(70% 40% at 50% 0%, rgba(255, 182, 39, 0.07), transparent 60%);
+
+	--sidebar-bg: linear-gradient(180deg, #150907 0%, #22100b 100%);
+	--sidebar-border: 1px solid rgb(255 107 53 / 0.2);
+
+	--btn-primary-bg: linear-gradient(135deg, #ff2e63 0%, #ff6b35 50%, #ffb627 100%);
+	--btn-primary-ink: #1c0703;
+	--btn-primary-shadow: 0 8px 24px -8px rgb(255 107 53 / 0.7);
+	--btn-primary-shadow-hover: 0 14px 34px -8px rgb(255 182 39 / 0.8);
+	--btn-primary-hover-filter: brightness(1.08);
+
+	--input-bg: linear-gradient(180deg, rgb(56 27 18 / 0.85), rgb(34 16 11 / 0.85));
+	--input-border: 1px solid rgb(255 107 53 / 0.22);
+	--input-shadow: 0 12px 40px -20px rgb(0 0 0 / 0.9);
+	--input-border-focus: 1px solid rgb(255 107 53 / 0.65);
+	--input-shadow-focus: 0 0 0 3px rgb(255 107 53 / 0.15), 0 16px 44px -18px rgb(255 107 53 / 0.55);
+
+	--scrim: rgb(12 5 3 / 0.75);
+	--scrim-blur: blur(4px);
+	--scrollbar: rgb(255 107 53 / 0.4);
+	--selection-bg: rgb(255 107 53 / 0.3);
+	--selection-ink: #fff6ee;
+	--rule: rgb(255 107 53 / 0.2);
+	--code-bg: linear-gradient(180deg, #2b1410 0%, #1c0d09 100%);
+	--code-ring: inset 0 0 0 1px rgb(255 107 53 / 0.18);
+	--code-inline: #ffb627;
+	--code-inline-bg: rgb(255 107 53 / 0.14);
+	--shadow-md: 0 10px 26px -14px rgb(0 0 0 / 0.85);
+	--shadow-lg: 0 26px 64px -26px rgb(0 0 0 / 0.95);
+	--glow: 0 0 26px rgb(255 107 53 / 0.45);
+}
+
+/* ================================================================== *
+ * 6. EVERGREEN — old growth canopy, dappled light, soft edges
+ * ================================================================== */
+html[data-theme='evergreen'] {
+	--color-gray-50: 242 249 245;
+	--color-gray-100: 230 242 235;
+	--color-gray-200: 212 232 220;
+	--color-gray-300: 186 214 198;
+	--color-gray-400: 150 188 166;
+	--color-gray-500: 116 156 134;
+	--color-gray-600: 84 124 104;
+	--color-gray-700: 38 70 56;
+	--color-gray-800: 23 46 37;
+	--color-gray-850: 16 34 27;
+	--color-gray-900: 10 23 18;
+	--color-gray-950: 6 15 12;
+	--color-white: 236 247 240;
+	--color-black: 4 11 8;
+	--color-accent: 126 217 87;
+	--color-accent-soft: 154 230 180;
+	--color-accent-alt: 212 163 115;
+	--color-accent-ink: 6 22 12;
+
+	--ui-font-size: 16.5px;
+	--font-sans: 'Mona Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+	--font-display: 'InstrumentSerif', ui-serif, Georgia, serif;
+	--display-weight: 400;
+	--tracking: 0.004em;
+	--display-tracking: 0.005em;
+	--prose-leading: 1.78;
+
+	--radius-sm: 0.35rem;
+	--radius-base: 0.55rem;
+	--radius-md: 0.7rem;
+	--radius-lg: 1rem;
+	--radius-xl: 1.3rem;
+	--radius-2xl: 1.7rem;
+	--radius-3xl: 2.2rem;
+
+	--page-bg: linear-gradient(168deg, #0a1712 0%, #0d1f18 50%, #102a20 100%);
+	/* Light falling through a canopy. */
+	--atmosphere: radial-gradient(44% 56% at 76% -8%, rgba(126, 217, 87, 0.26) 0%, transparent 66%),
+		radial-gradient(38% 46% at 16% 18%, rgba(154, 230, 180, 0.18) 0%, transparent 68%),
+		radial-gradient(52% 40% at 50% 112%, rgba(212, 163, 115, 0.16) 0%, transparent 70%);
+	--atmosphere-filter: blur(10px);
+	--atmosphere-animation: theme-drift 56s ease-in-out infinite;
+	--page-texture: radial-gradient(circle at 78% 4%, rgba(126, 217, 87, 0.1), transparent 46%);
+
+	--sidebar-bg: linear-gradient(180deg, rgba(6, 15, 12, 0.95) 0%, rgba(11, 27, 21, 0.92) 100%);
+	--sidebar-border: 1px solid rgb(126 217 87 / 0.12);
+	--sidebar-blur: blur(10px);
+	--panel-blur: blur(10px) saturate(1.1);
+
+	--btn-primary-bg: linear-gradient(135deg, #7ed957 0%, #4ea96b 100%);
+	--btn-primary-ink: #06180d;
+	--btn-primary-shadow: 0 8px 26px -10px rgb(126 217 87 / 0.6);
+	--btn-primary-shadow-hover: 0 14px 34px -10px rgb(126 217 87 / 0.75);
+	--btn-primary-hover-transform: translateY(-1px);
+
+	--input-bg: linear-gradient(180deg, rgb(21 44 35 / 0.78), rgb(13 28 22 / 0.78));
+	--input-border: 1px solid rgb(126 217 87 / 0.16);
+	--input-shadow: 0 14px 44px -24px rgb(0 0 0 / 0.9);
+	--input-border-focus: 1px solid rgb(126 217 87 / 0.5);
+	--input-shadow-focus: 0 0 0 4px rgb(126 217 87 / 0.12), 0 18px 48px -22px rgb(126 217 87 / 0.45);
+
+	--scrim: rgb(4 11 8 / 0.72);
+	--scrim-blur: blur(6px);
+	--scrollbar: rgb(126 217 87 / 0.32);
+	--selection-bg: rgb(126 217 87 / 0.28);
+	--selection-ink: #f2f9f5;
+	--rule: rgb(126 217 87 / 0.16);
+	--code-bg: linear-gradient(180deg, rgb(18 40 31 / 0.96), rgb(10 23 18 / 0.96));
+	--code-ring: inset 0 0 0 1px rgb(126 217 87 / 0.14);
+	--code-inline: #d4a373;
+	--code-inline-bg: rgb(126 217 87 / 0.12);
+	--shadow-md: 0 12px 30px -18px rgb(0 0 0 / 0.8);
+	--shadow-lg: 0 30px 72px -32px rgb(0 0 0 / 0.9);
+	--glow: 0 0 28px rgb(126 217 87 / 0.32);
+}
+
+/* ================================================================== *
+ * 7. DECO — midnight lacquer with gold inlay
+ * ================================================================== */
+html[data-theme='deco'] {
+	--color-gray-50: 249 249 251;
+	--color-gray-100: 241 241 244;
+	--color-gray-200: 228 229 234;
+	--color-gray-300: 206 208 216;
+	--color-gray-400: 176 179 190;
+	--color-gray-500: 142 146 160;
+	--color-gray-600: 110 114 128;
+	--color-gray-700: 52 57 71;
+	--color-gray-800: 33 37 47;
+	--color-gray-850: 23 26 34;
+	--color-gray-900: 15 17 23;
+	--color-gray-950: 9 10 14;
+	--color-white: 247 242 230;
+	--color-black: 7 8 11;
+	--color-accent: 212 175 55;
+	--color-accent-soft: 232 217 160;
+	--color-accent-alt: 176 141 87;
+	--color-accent-ink: 12 10 4;
+
+	--ui-font-size: 15.75px;
+	--font-sans: 'Archivo', 'Inter', ui-sans-serif, system-ui, sans-serif;
+	--font-display: 'InstrumentSerif', ui-serif, Georgia, serif;
+	--display-weight: 400;
+	--display-tracking: 0.06em;
+	--tracking: 0.03em;
+	--prose-leading: 1.7;
+
+	--radius-sm: 0;
+	--radius-base: 0.05rem;
+	--radius-md: 0.1rem;
+	--radius-lg: 0.15rem;
+	--radius-xl: 0.2rem;
+	--radius-2xl: 0.25rem;
+	--radius-3xl: 0.3rem;
+
+	--page-bg: linear-gradient(180deg, #0f1117 0%, #12141c 60%, #171a22 100%);
+	/* Sunburst fan, the house motif. */
+	--atmosphere: repeating-conic-gradient(
+			from 200deg at 50% 104%,
+			rgba(212, 175, 55, 0.14) 0deg,
+			rgba(212, 175, 55, 0.14) 1.6deg,
+			transparent 1.6deg,
+			transparent 10deg
+		),
+		radial-gradient(70% 44% at 50% 0%, rgba(212, 175, 55, 0.14) 0%, transparent 62%);
+	--atmosphere-opacity: 0.55;
+	--atmosphere-filter: blur(0.4px);
+	/* The fan belongs at the hem of the screen, not across the text. */
+	--atmosphere-mask: linear-gradient(to top, #000 0%, rgba(0, 0, 0, 0.35) 42%, transparent 68%);
+	--atmosphere-animation: theme-breathe 22s ease-in-out infinite;
+	--page-texture: repeating-linear-gradient(
+		90deg,
+		rgba(212, 175, 55, 0.05) 0px,
+		rgba(212, 175, 55, 0.05) 1px,
+		transparent 1px,
+		transparent 14px
+	);
+	--page-texture-opacity: 0.6;
+
+	--sidebar-bg: linear-gradient(180deg, #0a0b10 0%, #101219 100%);
+	--sidebar-border: 1px solid rgb(212 175 55 / 0.35);
+
+	--btn-primary-bg: linear-gradient(135deg, #b08d57 0%, #d4af37 45%, #e8d9a0 100%);
+	--btn-primary-ink: #10110d;
+	--btn-primary-shadow: 0 2px 0 rgb(176 141 87 / 0.6), 0 8px 22px -12px rgb(212 175 55 / 0.7);
+	--btn-primary-shadow-hover: 0 2px 0 rgb(232 217 160 / 0.7),
+		0 12px 28px -10px rgb(212 175 55 / 0.85);
+
+	--input-bg: linear-gradient(180deg, #1b1f28 0%, #14171e 100%);
+	--input-border: 1px solid rgb(212 175 55 / 0.3);
+	--input-shadow: inset 0 1px 0 rgb(212 175 55 / 0.14);
+	--input-border-focus: 1px solid rgb(212 175 55 / 0.75);
+	--input-shadow-focus: inset 0 1px 0 rgb(232 217 160 / 0.28), 0 0 0 1px rgb(212 175 55 / 0.35);
+
+	--scrim: rgb(5 6 9 / 0.82);
+	--scrim-blur: blur(3px);
+	--scrollbar: rgb(212 175 55 / 0.45);
+	--selection-bg: rgb(212 175 55 / 0.3);
+	--selection-ink: #f7f2e6;
+	--rule: rgb(212 175 55 / 0.35);
+	--code-bg: #12141b;
+	--code-ring: inset 0 0 0 1px rgb(212 175 55 / 0.22);
+	--code-inline: #e8d9a0;
+	--code-inline-bg: rgb(212 175 55 / 0.12);
+	--shadow-md: 0 1px 0 rgb(212 175 55 / 0.18), 0 10px 26px -18px rgb(0 0 0 / 0.9);
+	--shadow-lg: 0 1px 0 rgb(212 175 55 / 0.22), 0 28px 64px -30px rgb(0 0 0 / 0.95);
+	--glow: 0 0 18px rgb(212 175 55 / 0.35);
+}
+
+/* A gold hairline under every heading — the inlay detail. */
+html[data-theme='deco'] h1,
+html[data-theme='deco'] h2 {
+	padding-bottom: 0.25em;
+	border-bottom: 1px solid rgb(212 175 55 / 0.35);
+}
+
+/* ================================================================== *
+ * 8. PAPER — warm stock, letterpress ink, wide margins (light)
+ * ================================================================== */
+html[data-theme='paper'] {
+	--color-gray-50: 250 247 240;
+	--color-gray-100: 244 239 229;
+	--color-gray-200: 234 227 213;
+	--color-gray-300: 214 205 188;
+	--color-gray-400: 178 168 150;
+	--color-gray-500: 140 130 114;
+	--color-gray-600: 104 95 82;
+	--color-gray-700: 74 67 58;
+	--color-gray-800: 52 47 40;
+	--color-gray-850: 41 37 32;
+	--color-gray-900: 30 27 23;
+	--color-gray-950: 20 18 15;
+	--color-white: 253 251 245;
+	--color-black: 28 25 20;
+	--color-accent: 178 58 47;
+	--color-accent-soft: 61 90 76;
+	--color-accent-alt: 140 130 114;
+	--color-accent-ink: 253 251 245;
+
+	--ui-font-size: 16.75px;
+	--font-sans: 'Inter', -apple-system, BlinkMacSystemFont, ui-sans-serif, system-ui, sans-serif;
+	--font-display: 'InstrumentSerif', ui-serif, Georgia, serif;
+	--font-serif: 'InstrumentSerif', ui-serif, Georgia, serif;
+	/* Long-form replies are set in the serif — this is the point of the theme. */
+	--font-body: 'InstrumentSerif', ui-serif, Georgia, serif;
+	--display-weight: 400;
+	--display-tracking: 0.005em;
+	--tracking: 0.006em;
+	--prose-leading: 1.82;
+
+	--radius-sm: 0.05rem;
+	--radius-base: 0.1rem;
+	--radius-md: 0.15rem;
+	--radius-lg: 0.2rem;
+	--radius-xl: 0.3rem;
+	--radius-2xl: 0.4rem;
+	--radius-3xl: 0.5rem;
+
+	--page-bg: linear-gradient(160deg, #fdfbf5 0%, #f6f1e6 60%, #efe9dd 100%);
+	--atmosphere: radial-gradient(60% 50% at 8% 0%, rgba(178, 58, 47, 0.07) 0%, transparent 60%),
+		radial-gradient(60% 50% at 100% 100%, rgba(61, 90, 76, 0.08) 0%, transparent 60%);
+	/* Paper grain: fine crosshatch rather than an image, so it stays crisp. */
+	--page-texture: repeating-linear-gradient(
+			22deg,
+			rgba(120, 104, 80, 0.045) 0px,
+			rgba(120, 104, 80, 0.045) 1px,
+			transparent 1px,
+			transparent 3px
+		),
+		repeating-linear-gradient(
+			-38deg,
+			rgba(120, 104, 80, 0.035) 0px,
+			rgba(120, 104, 80, 0.035) 1px,
+			transparent 1px,
+			transparent 4px
+		);
+	--page-texture-opacity: 0.8;
+
+	--sidebar-bg: linear-gradient(180deg, #f5f0e4 0%, #efe8d9 100%);
+	--sidebar-border: 1px solid rgb(120 104 80 / 0.22);
+
+	--btn-primary-bg: linear-gradient(180deg, #2b2620 0%, #1c1914 100%);
+	--btn-primary-ink: #fdfbf5;
+	--btn-primary-shadow: 0 1px 0 rgb(255 255 255 / 0.25) inset, 0 2px 6px -2px rgb(60 50 36 / 0.45);
+	--btn-primary-shadow-hover: 0 1px 0 rgb(255 255 255 / 0.3) inset,
+		0 6px 14px -4px rgb(60 50 36 / 0.5);
+
+	--input-bg: #fffdf8;
+	--input-border: 1px solid rgb(120 104 80 / 0.28);
+	--input-shadow: inset 0 1px 2px rgb(120 104 80 / 0.12);
+	--input-border-focus: 1px solid rgb(178 58 47 / 0.55);
+	--input-shadow-focus: inset 0 1px 2px rgb(120 104 80 / 0.12), 0 0 0 3px rgb(178 58 47 / 0.1);
+
+	--scrim: rgb(40 34 26 / 0.45);
+	--scrim-blur: blur(2px);
+	--scrollbar: rgb(120 104 80 / 0.35);
+	--selection-bg: rgb(178 58 47 / 0.18);
+	--selection-ink: #1c1914;
+	--rule: rgb(120 104 80 / 0.3);
+	--code-bg: #f3ece0;
+	--code-ring: inset 0 0 0 1px rgb(120 104 80 / 0.22);
+	--code-inline: #9c3327;
+	--code-inline-bg: rgb(178 58 47 / 0.09);
+	--shadow-md: 0 1px 2px rgb(60 50 36 / 0.12), 0 6px 18px -12px rgb(60 50 36 / 0.35);
+	--shadow-lg: 0 2px 4px rgb(60 50 36 / 0.12), 0 24px 48px -28px rgb(60 50 36 / 0.45);
+	--glow: none;
+}
+
+/* Letterpress: ink pressed a hair into the stock. */
+html[data-theme='paper'] h1,
+html[data-theme='paper'] h2,
+html[data-theme='paper'] .font-primary {
+	text-shadow: 0 1px 0 rgb(255 255 255 / 0.75);
+}
+
+/* ================================================================== *
+ * 9. SAKURA — soft petals, pillowy shapes, spring haze (light)
+ * ================================================================== */
+html[data-theme='sakura'] {
+	--color-gray-50: 255 250 252;
+	--color-gray-100: 255 241 246;
+	--color-gray-200: 254 226 236;
+	--color-gray-300: 250 202 218;
+	--color-gray-400: 240 166 192;
+	--color-gray-500: 214 124 158;
+	--color-gray-600: 180 90 126;
+	--color-gray-700: 142 64 98;
+	--color-gray-800: 108 46 74;
+	--color-gray-850: 90 38 62;
+	--color-gray-900: 70 28 48;
+	--color-gray-950: 48 18 34;
+	--color-white: 255 252 253;
+	--color-black: 64 26 45;
+	--color-accent: 244 114 182;
+	--color-accent-soft: 167 139 250;
+	--color-accent-alt: 103 232 249;
+	--color-accent-ink: 255 250 252;
+
+	--ui-font-size: 16.5px;
+	--font-sans: 'Mona Sans', 'Inter', ui-sans-serif, system-ui, sans-serif;
+	--font-display: 'Archivo', 'Mona Sans', sans-serif;
+	--display-weight: 600;
+	--display-tracking: -0.012em;
+	--tracking: 0.004em;
+	--prose-leading: 1.76;
+
+	/* Everything is a lozenge. */
+	--radius-sm: 0.45rem;
+	--radius-base: 0.65rem;
+	--radius-md: 0.85rem;
+	--radius-lg: 1.15rem;
+	--radius-xl: 1.5rem;
+	--radius-2xl: 1.9rem;
+	--radius-3xl: 2.4rem;
+
+	--page-bg: linear-gradient(165deg, #fffcfd 0%, #fff4f8 55%, #fdeef5 100%);
+	--atmosphere: radial-gradient(46% 42% at 14% 16%, rgba(244, 114, 182, 0.24) 0%, transparent 66%),
+		radial-gradient(42% 40% at 88% 72%, rgba(167, 139, 250, 0.22) 0%, transparent 66%),
+		radial-gradient(38% 34% at 60% 100%, rgba(103, 232, 249, 0.18) 0%, transparent 70%);
+	--atmosphere-filter: blur(14px);
+	--atmosphere-animation: theme-drift 42s ease-in-out infinite;
+	/* Petals on the wind. */
+	--page-texture: radial-gradient(3px 5px at 10% 0%, rgba(244, 114, 182, 0.55), transparent 60%),
+		radial-gradient(4px 6px at 52% 0%, rgba(250, 202, 218, 0.6), transparent 60%),
+		radial-gradient(3px 4px at 84% 0%, rgba(167, 139, 250, 0.45), transparent 60%);
+	--page-texture-size: 100% 100%;
+	--page-texture-animation: theme-fall 26s linear infinite;
+
+	--sidebar-bg: linear-gradient(180deg, #fff6fa 0%, #ffeef5 100%);
+	--sidebar-border: 1px solid rgb(244 114 182 / 0.18);
+
+	--btn-primary-bg: linear-gradient(135deg, #f472b6 0%, #c084fc 55%, #a78bfa 100%);
+	--btn-primary-ink: #fffafc;
+	--btn-primary-shadow: 0 10px 24px -10px rgb(244 114 182 / 0.65);
+	--btn-primary-shadow-hover: 0 16px 34px -10px rgb(167 139 250 / 0.7);
+	--btn-primary-hover-transform: translateY(-1px) scale(1.02);
+
+	--input-bg: rgb(255 255 255 / 0.82);
+	--input-border: 1px solid rgb(244 114 182 / 0.22);
+	--input-shadow: 0 12px 34px -20px rgb(180 90 126 / 0.55);
+	--input-border-focus: 1px solid rgb(244 114 182 / 0.5);
+	--input-shadow-focus: 0 0 0 5px rgb(244 114 182 / 0.12), 0 16px 40px -20px rgb(167 139 250 / 0.55);
+	--panel-blur: blur(12px) saturate(1.15);
+
+	--scrim: rgb(90 38 62 / 0.4);
+	--scrim-blur: blur(6px);
+	--scrollbar: rgb(244 114 182 / 0.38);
+	--selection-bg: rgb(244 114 182 / 0.24);
+	--selection-ink: #4a1c33;
+	--rule: rgb(244 114 182 / 0.2);
+	--code-bg: linear-gradient(180deg, #fff3f8 0%, #ffe9f1 100%);
+	--code-ring: inset 0 0 0 1px rgb(244 114 182 / 0.18);
+	--code-inline: #be5e82;
+	--code-inline-bg: rgb(244 114 182 / 0.12);
+	--shadow-md: 0 8px 22px -14px rgb(180 90 126 / 0.5);
+	--shadow-lg: 0 24px 56px -28px rgb(180 90 126 / 0.55);
+	--glow: 0 0 30px rgb(244 114 182 / 0.3);
+}
+
+/* ================================================================== *
+ * 10. BRUTALIST — hard edges, hard shadows, zero apology (light)
+ * ================================================================== */
+html[data-theme='brutalist'] {
+	--color-gray-50: 255 255 255;
+	--color-gray-100: 245 245 245;
+	--color-gray-200: 229 229 229;
+	--color-gray-300: 200 200 200;
+	--color-gray-400: 150 150 150;
+	--color-gray-500: 110 110 110;
+	--color-gray-600: 74 74 74;
+	--color-gray-700: 38 38 38;
+	--color-gray-800: 23 23 23;
+	--color-gray-850: 15 15 15;
+	--color-gray-900: 8 8 8;
+	--color-gray-950: 0 0 0;
+	--color-white: 250 250 248;
+	--color-black: 0 0 0;
+	--color-accent: 255 59 0;
+	--color-accent-soft: 0 0 255;
+	--color-accent-alt: 255 230 0;
+	--color-accent-ink: 255 255 255;
+
+	--ui-font-size: 15.25px;
+	--font-sans: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, Consolas, monospace;
+	--font-display: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, monospace;
+	--font-body: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, monospace;
+	--display-transform: uppercase;
+	--display-weight: 700;
+	--display-tracking: 0.02em;
+	--tracking: -0.005em;
+	--prose-leading: 1.5;
+
+	--radius-sm: 0;
+	--radius-base: 0;
+	--radius-md: 0;
+	--radius-lg: 0;
+	--radius-xl: 0;
+	--radius-2xl: 0;
+	--radius-3xl: 0;
+
+	--page-bg: #fafaf8;
+	--atmosphere: none;
+	/* Engineering paper. */
+	--page-texture: repeating-linear-gradient(
+			0deg,
+			rgba(0, 0, 0, 0.055) 0px,
+			rgba(0, 0, 0, 0.055) 1px,
+			transparent 1px,
+			transparent 24px
+		),
+		repeating-linear-gradient(
+			90deg,
+			rgba(0, 0, 0, 0.055) 0px,
+			rgba(0, 0, 0, 0.055) 1px,
+			transparent 1px,
+			transparent 24px
+		);
+
+	--sidebar-bg: #ffe600;
+	--sidebar-border: 2px solid #000000;
+
+	--btn-primary-bg: #ff3b00;
+	--btn-primary-ink: #ffffff;
+	--btn-primary-border: 2px solid #000000;
+	--btn-primary-shadow: 4px 4px 0 #000000;
+	--btn-primary-shadow-hover: 6px 6px 0 #0000ff;
+	--btn-primary-hover-transform: translate(-1px, -1px);
+
+	--input-bg: #ffffff;
+	--input-border: 2px solid #000000;
+	--input-shadow: 6px 6px 0 #000000;
+	--input-border-focus: 2px solid #ff3b00;
+	--input-shadow-focus: 6px 6px 0 #0000ff;
+
+	--scrim: rgb(0 0 0 / 0.55);
+	--scrollbar: #000000;
+	--selection-bg: #ffe600;
+	--selection-ink: #000000;
+	--rule: #000000;
+	--code-bg: #000000;
+	--code-ring: 4px 4px 0 #ff3b00;
+	--code-inline: #ff3b00;
+	--code-inline-bg: #ffe600;
+	--shadow-md: 3px 3px 0 #000000;
+	--shadow-lg: 8px 8px 0 #000000;
+	--glow: none;
+}
+
+/* Hard-edged panels and rules: no blur, no softness, no gradients. */
+html[data-theme='brutalist'] .modal > div {
+	border: 2px solid #000000;
+	box-shadow: 10px 10px 0 #000000;
+}
+
+html[data-theme='brutalist'] hr {
+	border-top-width: 2px;
+}
+
+html[data-theme='brutalist'] .rounded-full:not(img) {
+	border-radius: 0;
+}
+
+html[data-theme='brutalist'] pre > code.hljs {
+	color: #f5f5f5;
+}
+
+html[data-theme='brutalist'] .app-shell,
+html[data-theme='brutalist'] .modal,
+html[data-theme='brutalist'] .chat-input-shell {
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
+}

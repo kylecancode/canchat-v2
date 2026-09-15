@@ -4,18 +4,19 @@
 	import { getLanguages } from '$lib/i18n';
 	const dispatch = createEventDispatcher();
 
-	import { ariaMessage, models, settings, theme, user, config } from '$lib/stores';
+	import { ariaMessage, models, settings, user, config } from '$lib/stores';
 
 	const i18n = getContext('i18n');
 
 	import AdvancedParams from './Advanced/AdvancedParams.svelte';
+	import ThemePicker from './ThemePicker.svelte';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
+	import { applyTheme } from '$lib/themes';
 
 	export let saveSettings: Function;
 	export let getModels: Function;
 
 	// General
-	let themes = ['dark', 'light'];
 	let selectedTheme = 'system';
 
 	let languages: Awaited<ReturnType<typeof getLanguages>> = [];
@@ -77,6 +78,7 @@
 
 	onMount(async () => {
 		selectedTheme = localStorage.theme ?? 'system';
+		applyTheme(selectedTheme);
 
 		languages = await getLanguages();
 
@@ -89,51 +91,6 @@
 		params = { ...params, ...$settings.params };
 		params.stop = $settings?.params?.stop ? ($settings?.params?.stop ?? []).join(',') : null;
 	});
-
-	const applyTheme = (_theme: string) => {
-		let themeToApply = _theme;
-
-		if (_theme === 'system') {
-			themeToApply = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-		}
-
-		if (themeToApply === 'dark') {
-			document.documentElement.style.setProperty('--color-gray-800', '#333');
-			document.documentElement.style.setProperty('--color-gray-850', '#262626');
-			document.documentElement.style.setProperty('--color-gray-900', '#171717');
-			document.documentElement.style.setProperty('--color-gray-950', '#0d0d0d');
-		}
-
-		themes
-			.filter((e) => e !== themeToApply)
-			.forEach((e) => {
-				e.split(' ').forEach((e) => {
-					document.documentElement.classList.remove(e);
-				});
-			});
-
-		themeToApply.split(' ').forEach((e) => {
-			document.documentElement.classList.add(e);
-		});
-
-		const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-		if (metaThemeColor) {
-			if (_theme.includes('system')) {
-				const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
-					? 'dark'
-					: 'light';
-				metaThemeColor.setAttribute('content', systemTheme === 'light' ? '#ffffff' : '#171717');
-			} else {
-				metaThemeColor.setAttribute('content', _theme === 'dark' ? '#171717' : '#ffffff');
-			}
-		}
-	};
-
-	const themeChangeHandler = (_theme: string) => {
-		theme.set(_theme);
-		localStorage.setItem('theme', _theme);
-		applyTheme(_theme);
-	};
 </script>
 
 <div class="flex flex-col h-full justify-between text-sm">
@@ -141,21 +98,9 @@
 		<div class="">
 			<h3 class=" mb-1 text-sm font-medium">{$i18n.t('Settings')}</h3>
 
-			<div class="flex w-full justify-between">
-				<div class=" self-center text-xs font-medium">{$i18n.t('Theme')}</div>
-				<div class="flex items-center relative">
-					<select
-						id="theme-selection"
-						class=" dark:bg-gray-900 w-fit pr-8 rounded py-2 px-2 text-xs bg-transparent outline-none text-right"
-						bind:value={selectedTheme}
-						placeholder="Select a theme"
-						on:change={() => themeChangeHandler(selectedTheme)}
-					>
-						<option value="system">⚙️ {$i18n.t('System')}</option>
-						<option value="dark">🌑 {$i18n.t('Dark')}</option>
-						<option value="light">☀️ {$i18n.t('Light')}</option>
-					</select>
-				</div>
+			<div class="flex flex-col w-full gap-2 mb-1">
+				<div class=" self-start text-xs font-medium">{$i18n.t('Theme')}</div>
+				<ThemePicker bind:selected={selectedTheme} />
 			</div>
 
 			<div>
